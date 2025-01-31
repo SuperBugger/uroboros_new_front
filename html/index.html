@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uroboros 2.0</title>
+    <link rel="stylesheet" href="../plugins/fontawesome-free/css/all.min.css">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="../plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="../plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" href="../plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="../plugins/adminlte/adminlte.min.css">
+    <!--Custom styles-->
+    <link href="../css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <!-- DataTables CSS -->
+<!--    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">-->
+
+    <!-- DataTables Select CSS -->
+<!--    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.3.1/css/select.dataTables.css">-->
+
+<!--    &lt;!&ndash; jQuery &ndash;&gt;-->
+<!--    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>-->
+
+<!--    &lt;!&ndash; DataTables JS &ndash;&gt;-->
+<!--    <script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>-->
+
+<!--    &lt;!&ndash; DataTables Select JS &ndash;&gt;-->
+<!--    <script type="text/javascript" src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.js"></script>-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+</head>
+<body style="display: flex; flex-direction: column;">
+<!-- Preloader -->
+<div class="preloader flex-column justify-content-center align-items-center">
+    <img class="animation__shake" src="../img/uroboros512.png" alt="Uroboros Logo" height="512" width="512">
+</div>
+
+<!-- Navbar -->
+<nav class="main-header navbar navbar-expand navbar-light navbar-white" style="margin-left: 0 !important;">
+    <div class="dt-buttons btn-group" style="margin-bottom: 0 !important;">
+        <button type="button" style="flex: 0;" class="btn btn-secondary dropdown-toggle" id="menu-button">
+            <i class="fas fa-bars"></i> Меню
+        </button>
+        <ul class="dropdown-menu" id="menu-dropdown" style="display: none;">
+            <li><a class="dropdown-item" href="#" id="menu-cve">Журнал уязвимостей</a></li>
+            <li><a class="dropdown-item" href="#" id="menu-stats">Статистика</a></li>
+        </ul>
+    </div>
+
+    <a href="#projects" class="navbar-brand">
+        <img src="../img/uroboros64.jpg" alt="Uroboros Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+        <span class="brand-text font-weight-light">Uroboros</span>
+    </a>
+</nav>
+
+<!-- Main Content -->
+<main class="mt-4" style="margin: 8px; min-height: 668px;">
+    <!-- Navigation Links -->
+    <div id="breadcrumb-links" class="mb-3">
+        <!-- Links will be dynamically generated here -->
+    </div>
+
+    <!-- Button Rows -->
+    <div id="package-checkbox">
+        <label>
+            <input type="checkbox" id="includeJoint"> Совместные
+        </label>
+    </div>
+
+    <div class="main-content">
+        <!-- Table -->
+        <div id="data-table-container">
+            <div id="custom-search-container">
+                <input type="text" id="custom-search-input" placeholder="Search...">
+                <button id="custom-search-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel" viewBox="0 0 16 16">
+                    <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z"/>
+                </svg></button>
+            </div>
+
+            <table id="data-table" class="table table-striped">
+                <!-- Table content will be dynamically generated here -->
+            </table>
+        </div>
+
+        <!-- Side Panels -->
+        <div id="cve-panels" style="display: none; min-width: 300px">
+            <div id="cve-data-panel" style="flex-direction: column">
+                <h4 id="cve-title"><a href="#" target="_blank" id="cve-title-link">Название уязвимости</a></h4>
+                <div>
+                    <button id="tracker-tab" class="tab-button active">Tracker</button>
+                    <button id="bdu-tab" class="tab-button">BDU</button>
+                </div>
+                <h5>Описание</h5>
+                <textarea id="textarea-cve-description" readonly="readonly" class="textarea-cve-description"></textarea>
+                <div id="cve-links"></div>
+                <div id="bdu-additional-info" style="display: none;">
+                    <h5>Обнаружена</h5>
+                    <p id="bdu-date-discovered">Дата обнаружения</p>
+
+                    <div style="display: flex; justify-content: space-between; margin-right: 26px;">
+                        <!-- Заголовок CVSS2 -->
+                        <h5 id="cvss2-header"></h5>
+
+                        <!-- Заголовок CVSS3 -->
+                        <h5 id="cvss3-header"></h5>
+                    </div>
+                </div>
+            </div>
+
+            <button id="filter-toggle-button" class="button-accent">Filters</button>
+
+            <div id="cve-filter-panel" class="cve-filter-panel">
+
+                <h4>Фильтры</h4>
+                <form id="cve-filters-form">
+
+                    <!-- Срочность -->
+                    <div>
+                        <label><strong>Срочность:</strong></label><br>
+                        <input type="checkbox" name="urgency" value="not yet assigned"> Не назначена<br>
+                        <input type="checkbox" name="urgency" value="unimportant"> Неважна<br>
+                        <input type="checkbox" name="urgency" value="low"> Низкая<br>
+                        <input type="checkbox" name="urgency" value="medium"> Средняя<br>
+                        <input type="checkbox" name="urgency" value="high"> Высокая<br>
+                        <input type="checkbox" name="urgency" value="end-of-life"> Окончание жизни<br>
+                    </div>
+
+                    <!-- Статус -->
+                    <div>
+                        <label><strong>Статус:</strong></label><br>
+                        <input type="checkbox" name="status" value="undetermined"> Недетерминирован<br>
+                        <input type="checkbox" name="status" value="resolved"> Разрешён<br>
+                        <input type="checkbox" name="status" value="open"> Открыт<br>
+                    </div>
+
+                    <!-- Уровень оценки -->
+                    <div>
+                        <label><strong>Уровень оценки:</strong></label><br>
+                        <label style="font-weight: 100;">
+                            <input type="checkbox" name="severity_level" value="unknown"> Неизвестен
+                        </label><br>
+                        <label style="font-weight: 100;">
+                            <input type="checkbox" name="severity_level" value="low"> Низкий
+                        </label><br>
+                        <label style="color: #ffc107; font-weight: 100;">
+                            <input type="checkbox" name="severity_level" value="medium"> Средний
+                        </label><br>
+                        <label style="color: #d56202; font-weight: 100;">
+                            <input type="checkbox" name="severity_level" value="high"> Высокий
+                        </label><br>
+                        <label style="color: red; font-weight: 100;">
+                            <input type="checkbox" name="severity_level" value="critical"> Критический
+                        </label><br>
+                    </div>
+
+
+                    <!-- Время обнаружения -->
+                    <div>
+                        <!--                    <label><strong>Время обнаружения:</strong></label><br>-->
+                        <!--                    <label for="time_detection_start">От:</label>-->
+                        <!--                    <input type="date" id="time_detection_start" name="time_detection_start"><br>-->
+                        <!--                    <label for="time_detection_end">До:</label>-->
+                        <!--                    <input type="date" id="time_detection_end" name="time_detection_end"><br>-->
+                        <div>
+                            <label for="date_discovered_start">Start Date:</label>
+                            <input type="date" id="date_discovered_start" name="date_discovered_start">
+                        </div>
+                        <div>
+                            <label for="date_discovered_end">End Date:</label>
+                            <input type="date" id="date_discovered_end" name="date_discovered_end">
+                        </div>
+                    </div>
+
+
+                    <!-- Рецензия уязвимости -->
+<!--                    <div>-->
+<!--                        <label><strong>Рецензия уязвимости:</strong></label><br>-->
+<!--                        <input type="checkbox" name="vul_review" value="не рецензирована"> Не рецензирована<br>-->
+<!--                        <input type="checkbox" name="vul_review" value="директивно разрешена"> Директивно разрешена<br>-->
+<!--                        <input type="checkbox" name="vul_review" value="не подтверждена"> Не подтверждена<br>-->
+<!--                        <input type="checkbox" name="vul_review" value="источник не исправлен"> Источник не исправлен<br>-->
+<!--                    </div>-->
+
+                </form>
+                <button id="apply-filters-button">Применить</button>
+
+            </div>
+
+        </div>
+    </div>
+
+</main>
+
+<!-- Main Footer -->
+<footer class="main-footer"  style="margin-left: 0 !important; display: flex; flex-direction: row-reverse; justify-content: space-between;">
+    <div class="float-right d-none d-sm-inline">В разработке</div>
+    <div id="update-info">
+        <p>BDU: <span id="last-update-bdu-footer"></span></p>
+        <p>Debtracker: <span id="last-update-debtracker-footer"></span></p>
+    </div>
+    <strong>Copyright &copy; 2021-2022 <a href="https://">NPPCT</a>. All rights reserved.</strong>
+</footer>
+
+<!-- Модальное окно статистики -->
+<div id="stats-modal" class="modal">
+    <div class="modal-content">
+        <span id="stats-modal-close" class="close">&times;</span>
+        <h2>Статистика</h2>
+        <p>Общее количество уязвимостей: <span id="total-vulnerabilities"></span></p>
+        <p>Последнее обновление BDU: <span id="last-update-bdu-modal"></span></p>
+        <p>Последнее обновление Debtracker: <span id="last-update-debtracker-modal"></span></p>
+    </div>
+</div>
+
+
+<!-- jQuery -->
+<script src="../plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script src="../plugins/adminlte/adminlte.min.js"></script>
+<!-- DataTables  & Plugins -->
+<script src="../plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="../plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="../plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="../plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="../plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="../plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="../plugins/jszip/jszip.min.js"></script>
+<script src="../plugins/pdfmake/pdfmake.min.js"></script>
+<script src="../plugins/pdfmake/vfs_fonts.js"></script>
+<script src="../plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="../plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="../plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
+<link rel="stylesheet" href="//cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css">
+<script src="//cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
+<script src="//cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
+
+<!-- DataTables Select CSS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.3.1/css/select.dataTables.min.css">
+<!-- DataTables Select JS -->
+<script type="text/javascript" src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
+<!-- DataTables CSS -->
+<!--<link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">-->
+
+<!-- DataTables Buttons CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css">
+
+<!-- DataTables Buttons JS -->
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
+
+<!-- Buttons Export JS (CSV, Excel, PDF, Print) -->
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>-->
+
+<!-- PapaParse -->
+<script src="https://unpkg.com/papaparse@5.3.1/papaparse.min.js"></script>
+
+<!-- SheetJS -->
+<script src="https://unpkg.com/xlsx@0.17.0/dist/xlsx.full.min.js"></script>
+
+<!-- jsPDF -->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>-->
+
+
+<!-- jsPDF -->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>-->
+
+<!-- jsPDF AutoTable Plugin -->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>-->
+
+<!-- jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+<!-- PapaParse -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+<!-- XLSX -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+
+<!-- JavaScript -->
+<script src="../js/test.js"></script>
+</body>
+</html>
