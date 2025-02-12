@@ -684,7 +684,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                         return visibleColumns.map(colIdx => dt.cell(rowIdx, colIdx).data());
                                     });
 
-                                    const doc = new jsPDF();
+                                    const doc = new window.jspdf.jsPDF();
                                     doc.autoTable({
                                         head: [headers],
                                         body: data

@@ -136,7 +136,7 @@ tr.selected {
 }
 
 #data-table-container {
-    overflow-x: auto;
+    /*overflow-x: auto;*/
     width: 100%;
 }
 
