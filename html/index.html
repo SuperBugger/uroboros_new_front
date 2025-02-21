@@ -39,7 +39,7 @@
 
 <!-- Navbar -->
 <nav class="main-header navbar navbar-expand navbar-light navbar-white" style="margin-left: 0 !important;">
-    <div class="dt-buttons btn-group" style="margin-bottom: 0 !important;">
+    <div class="dt-buttons btn-group" style="margin-bottom: 0 !important; width: auto;">
         <button type="button" style="flex: 0;" class="btn btn-secondary dropdown-toggle" id="menu-button">
             <i class="fas fa-bars"></i> Меню
         </button>
@@ -53,6 +53,11 @@
         <img src="../img/uroboros64.jpg" alt="Uroboros Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
         <span class="brand-text font-weight-light">Uroboros</span>
     </a>
+
+    <div class="navbar-nav ml-auto" id="auth-area">
+        <button class="btn btn-secondary" id="auth-button">Вход/Регистрация</button>
+    </div>
+
 </nav>
 
 <!-- Main Content -->
@@ -211,6 +216,59 @@
         <p>Общее количество уязвимостей: <span id="total-vulnerabilities"></span></p>
         <p>Последнее обновление BDU: <span id="last-update-bdu-modal"></span></p>
         <p>Последнее обновление Debtracker: <span id="last-update-debtracker-modal"></span></p>
+    </div>
+</div>
+
+<!-- Модальное окно аутентификации -->
+<div id="auth-modal" class="modal">
+    <div class="modal-content">
+        <span id="auth-modal-close" class="close">&times;</span>
+        <div class="auth-tabs">
+            <button id="login-tab" class="tab-button active">Вход</button>
+            <button id="register-tab" class="tab-button">Регистрация</button>
+        </div>
+        <!-- Форма входа -->
+        <div id="login-form-container" class="auth-form">
+            <h2>Вход</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Пароль</label>
+                    <input type="password" id="login-password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Войти</button>
+            </form>
+        </div>
+        <!-- Форма регистрации -->
+        <div id="register-form-container" class="auth-form" style="display: none;">
+            <h2>Регистрация</h2>
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="register-username">Имя пользователя</label>
+                    <input type="text" id="register-username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="admin-code">Admin Code</label>
+                    <input type="text" id="admin-code" name="admin_code">
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Пароль</label>
+                    <input type="password" id="register-password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-confirm-password">Подтверждение пароля</label>
+                    <input type="password" id="register-confirm-password" name="confirm_password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+            </form>
+        </div>
     </div>
 </div>
 

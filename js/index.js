@@ -35,9 +35,9 @@ const routeMap = [
         ]
     },
     {
-        pattern: /^projects\/(\d+)\/assembly\/(\d+)\/package\/(\d+)\/changelog$/,
-        updateLinks: (match) => [`#projects`, `#projects/${match[1]}/assembly`, `#projects/${match[1]}/assembly/${match[2]}/package`, `#projects/${match[1]}/assembly/${match[2]}/package/${match[3]}/changelog`],
-        dataUrl: (match) => `/projects/${match[1]}/assembly/${match[2]}/package/${match[3]}/changelog`,
+        pattern: /^projects\/(\d+)\/assembly\/(\d+)\/packages\/(\d+)\/changelog$/,
+        updateLinks: (match) => [`#projects`, `#projects/${match[1]}/assembly`, `#projects/${match[1]}/assembly/${match[2]}/package`, `#projects/${match[1]}/assembly/${match[2]}/packages/${match[3]}/changelog`],
+        dataUrl: (match) => `/projects/${match[1]}/assembly/${match[2]}/packages/${match[3]}/changelog`,
         tableColumns: [
             { data: 'version', title: 'Version' },
             { data: 'author_name', title: 'Author' },
@@ -97,7 +97,33 @@ const routeMap = [
             initializeFilterPanel();
         }
     },
+    {
+        pattern: /^projects\/(\d+)\/assembly\/(\d+)\/package\/([^/]+)\/vulnerabilities$/,
+        updateLinks: (match) => [
+            `#projects`,
+            `#projects/${match[1]}/assembly`,
+            `#projects/${match[1]}/assembly/${match[2]}/package`,
+            `#projects/${match[1]}/assembly/${match[2]}/package/${match[3]}/vulnerabilities`
+        ],
+        dataUrl: (match) => `/projects/${match[1]}/assembly/${match[2]}/package/${match[3]}/vulnerabilities`,
+        tableColumns: [
+            { data: 'cve_name', title: 'CVE Name' },
+            { data: 'st_name', title: 'Status' },
+            { data: 'urg_name', title: 'Urgency' },
+            { data: 'severity_level', title: 'Severity Level' },
+            { data: 'date_discovered', title: 'Date Discovered' },
+            { data: 'cve_desc', title: 'Description', visible: false }
+        ],
+        afterLoad: () => {
+            // Отображаем панели CVE
+            document.getElementById('cve-panels').style.display = 'block';
+            document.getElementById('cve-data-panel').style.display = 'flex';
+            document.getElementById('cve-data-panel').style.justifyContent = 'center';
 
+            // Инициализируем панель фильтров
+            initializeFilterPanel();
+        }
+    }
 ];
 
 let currentCVEData = {
@@ -160,7 +186,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Скрываем панели CVE по умолчанию
         document.getElementById('cve-panels').style.display = 'none';
-        clearDataPanel();
+        // clearDataPanel();
+
+        const isCVEPage = hash.startsWith('cve');
+        if (isCVEPage) {
+            const selectedRow = table?.row({ selected: true }).data();
+
+            if (!selectedRow) {
+                clearDataPanel();
+                resetCurrentCVEData();
+            } else {
+                updateDataPanel(selectedRow);
+            }
+        } else {
+            clearDataPanel();
+            resetCurrentCVEData();
+        }
 
         const matchedRoute= routeMap.find(route => route.pattern.test(hash));
 
@@ -211,7 +252,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const parts = hash.split('/');
 
-            if (parts[0] === 'projects' && parts.length === 7 && parts[4] === 'package' && parts[6] === 'changelog') {
+            if (parts[0] === 'projects' && parts.length === 7 && parts[4] === 'packages' && parts[6] === 'changelog') {
                 columns = matchedRoute.tableColumns;
             } else if (parts[0] === 'projects' && parts.length === 5 && parts[4] === 'package') {
                 // На странице пакетов используем специальные колонки
@@ -393,7 +434,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 select: {
                     style: 'single'
                 },
-                pageLength: 10,
+                pageLength: 15,
                 lengthMenu: [5, 10, 25, 50, 100],
                 ordering: true,
                 searching: false,
@@ -410,60 +451,200 @@ document.addEventListener('DOMContentLoaded', function () {
                         extend: 'collection',
                         text: '<i class="fas fa-download"></i> Export',
                         autoClose: true,
+                        // buttons: [
+                        //     {
+                        //         text: 'Export Current Page to CSV',
+                        //         action: function (e, dt, button, config) {
+                        //             const visibleColumns = dt.columns(':visible').indexes().toArray();
+                        //             const headers = visibleColumns.map(index => dt.column(index).header().innerText);
+                        //             const data = dt.rows({ page: 'current' }).indexes().toArray().map(rowIdx => {
+                        //                 return visibleColumns.map(colIdx => {
+                        //                     return dt.cell(rowIdx, colIdx).data();
+                        //                 });
+                        //             });
+                        //
+                        //             const csv = Papa.unparse({
+                        //                 fields: headers,
+                        //                 data: data
+                        //             });
+                        //
+                        //             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                        //             const link = document.createElement('a');
+                        //             link.href = URL.createObjectURL(blob);
+                        //             link.download = 'current_page.csv';
+                        //             document.body.appendChild(link);
+                        //             link.click();
+                        //             document.body.removeChild(link);
+                        //
+                        //             dt.buttons('.buttons-collection').collection(false);
+                        //         }
+                        //     },
+                        //     // Экспорт всех данных в CSV
+                        //     {
+                        //         text: 'Export All Data to CSV',
+                        //         action: function (e, dt, button, config) {
+                        //             const hash = window.location.hash.substr(1);
+                        //             const parts = hash.split('/');
+                        //             let url = '';
+                        //             let projectId, assemblyId;
+                        //
+                        //             if (parts[0] === 'projects') {
+                        //                 if (parts.length === 5 && parts[4] === 'package') {
+                        //                     projectId = parts[1];
+                        //                     assemblyId = parts[3];
+                        //                     const includePreviousPackages = document.getElementById('includeJoint').checked ? 'true' : 'false';
+                        //                     url = `http://0.0.0.0:8000/projects/${projectId}/assembly/${assemblyId}/package?export_all=true&format=csv&include_previous=${includePreviousPackages}`;
+                        //                 }
+                        //             }
+                        //
+                        //             window.location = url;
+                        //         }
+                        //     },
+                        //     // Экспорт текущей страницы в Excel
+                        //     {
+                        //         text: 'Export Current Page to Excel',
+                        //         action: function (e, dt, button, config) {
+                        //             const visibleColumns = dt.columns(':visible').indexes().toArray();
+                        //             const headers = visibleColumns.map(index => dt.column(index).header().innerText);
+                        //             const data = dt.rows({ page: 'current' }).indexes().toArray().map(rowIdx => {
+                        //                 const rowData = {};
+                        //                 visibleColumns.forEach((colIdx, i) => {
+                        //                     const cellData = dt.cell(rowIdx, colIdx).data();
+                        //                     rowData[headers[i]] = cellData;
+                        //                 });
+                        //                 return rowData;
+                        //             });
+                        //
+                        //             const worksheet = XLSX.utils.json_to_sheet(data);
+                        //             const workbook = XLSX.utils.book_new();
+                        //             XLSX.utils.book_append_sheet(workbook, worksheet, 'Current Page');
+                        //             XLSX.writeFile(workbook, 'current_page.xlsx');
+                        //
+                        //             // Закрываем выпадающий список
+                        //             dt.buttons('.buttons-collection').collection(false);
+                        //         }
+                        //     },
+                        //     // Экспорт всех данных в Excel
+                        //     {
+                        //         text: 'Export All Data to Excel',
+                        //         action: function (e, dt, button, config) {
+                        //             const hash = window.location.hash.substr(1);
+                        //             const parts = hash.split('/');
+                        //             let url = '';
+                        //             let projectId, assemblyId;
+                        //
+                        //             if (parts[0] === 'projects') {
+                        //                 if (parts.length === 5 && parts[4] === 'package') {
+                        //                     projectId = parts[1];
+                        //                     assemblyId = parts[3];
+                        //                     const includePreviousPackages = document.getElementById('includeJoint').checked ? 'true' : 'false';
+                        //                     url = `http://0.0.0.0:8000/projects/${projectId}/assembly/${assemblyId}/package?export_all=true&format=excel&include_previous=${includePreviousPackages}`;
+                        //                 }
+                        //             }
+                        //
+                        //             window.location = url;
+                        //         }
+                        //     },
+                        //     // Экспорт текущей страницы в PDF
+                        //     {
+                        //         text: 'Export Current Page to PDF',
+                        //         action: function (e, dt, button, config) {
+                        //             const visibleColumns = dt.columns(':visible').indexes().toArray();
+                        //             const headers = visibleColumns.map(index => dt.column(index).header().innerText);
+                        //             const data = dt.rows({ page: 'current' }).indexes().toArray().map(rowIdx => {
+                        //                 return visibleColumns.map(colIdx => {
+                        //                     return dt.cell(rowIdx, colIdx).data();
+                        //                 });
+                        //             });
+                        //
+                        //             const doc = new window.jspdf.jsPDF();
+                        //
+                        //             doc.autoTable({
+                        //                 head: [headers],
+                        //                 body: data
+                        //             });
+                        //             doc.save('current_page.pdf');
+                        //
+                        //             dt.buttons('.buttons-collection').collection(false);
+                        //         }
+                        //     },
+                        //     // Экспорт всех данных в PDF
+                        //     {
+                        //         text: 'Export All Data to PDF',
+                        //         action: function (e, dt, button, config) {
+                        //             const hash = window.location.hash.substr(1);
+                        //             const parts = hash.split('/');
+                        //             let url = '';
+                        //             let projectId, assemblyId;
+                        //
+                        //             if (parts[0] === 'projects') {
+                        //                 if (parts.length === 5 && parts[4] === 'package') {
+                        //                     projectId = parts[1];
+                        //                     assemblyId = parts[3];
+                        //                     const includePreviousPackages = document.getElementById('includeJoint').checked ? 'true' : 'false';
+                        //                     url = `http://0.0.0.0:8000/projects/${projectId}/assembly/${assemblyId}/package?export_all=true&format=pdf&include_previous=${includePreviousPackages}`;
+                        //                 }
+                        //             }
+                        //
+                        //             window.location = url;
+                        //         }
+                        //     },
+                        //     // Печать текущей страницы
+                        //     {
+                        //         text: 'Print Current Page',
+                        //         action: function (e, dt, button, config) {
+                        //             dt.button('.buttons-print').trigger();
+                        //
+                        //             // Закрываем выпадающий список
+                        //             dt.buttons('.buttons-collection').collection(false);
+                        //         }
+                        //     },
+                        //     // Печать всех данных
+                        //     {
+                        //         text: 'Print All Data',
+                        //         action: function (e, dt, button, config) {
+                        //             const hash = window.location.hash.substr(1);
+                        //             const parts = hash.split('/');
+                        //             let url = '';
+                        //             let projectId, assemblyId;
+                        //
+                        //             if (parts[0] === 'projects') {
+                        //                 if (parts.length === 5 && parts[4] === 'package') {
+                        //                     projectId = parts[1];
+                        //                     assemblyId = parts[3];
+                        //                     const includePreviousPackages = document.getElementById('includeJoint').checked ? 'true' : 'false';
+                        //                     url = `http://0.0.0.0:8000/projects/${projectId}/assembly/${assemblyId}/package?export_all=true&format=print&include_previous=${includePreviousPackages}`;
+                        //                 }
+                        //             }
+                        //
+                        //             window.open(url, '_blank');
+                        //
+                        //             // Закрываем выпадающий список
+                        //             dt.buttons('.buttons-collection').collection(false);
+                        //         }
+                        //     }
+                        // ]
+
                         buttons: [
+                            // Экспорт текущей страницы в CSV
                             {
                                 text: 'Export Current Page to CSV',
                                 action: function (e, dt, button, config) {
-                                    // Получаем видимые столбцы
                                     const visibleColumns = dt.columns(':visible').indexes().toArray();
-
-                                    // Получаем заголовки видимых столбцов
                                     const headers = visibleColumns.map(index => dt.column(index).header().innerText);
-
-                                    // Получаем данные из видимых столбцов
                                     const data = dt.rows({ page: 'current' }).indexes().toArray().map(rowIdx => {
-                                        return visibleColumns.map(colIdx => {
-                                            return dt.cell(rowIdx, colIdx).data();
-                                        });
+                                        return visibleColumns.map(colIdx => dt.cell(rowIdx, colIdx).data());
                                     });
 
-                                    // Используем PapaParse для генерации CSV
-                                    const csv = Papa.unparse({
-                                        fields: headers,
-                                        data: data
-                                    });
-
-                                    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-                                    const link = document.createElement('a');
-                                    link.href = URL.createObjectURL(blob);
-                                    link.download = 'current_page.csv';
-                                    document.body.appendChild(link);
-                                    link.click();
-                                    document.body.removeChild(link);
-
-                                    // Закрываем выпадающий список
-                                    dt.buttons('.buttons-collection').collection(false);
+                                    const csv = Papa.unparse({ fields: headers, data });
+                                    downloadFile(csv, 'current_page.csv', 'text/csv;charset=utf-8;');
                                 }
                             },
                             // Экспорт всех данных в CSV
                             {
                                 text: 'Export All Data to CSV',
                                 action: function (e, dt, button, config) {
-                                    const hash = window.location.hash.substr(1);
-                                    const parts = hash.split('/');
-                                    let url = '';
-                                    let projectId, assemblyId;
-
-                                    if (parts[0] === 'projects') {
-                                        if (parts.length === 5 && parts[4] === 'package') {
-                                            projectId = parts[1];
-                                            assemblyId = parts[3];
-                                            const includePreviousPackages = document.getElementById('includePreviousPackages').checked ? 'true' : 'false';
-                                            url = `http://0.0.0.0:8000/projects/${projectId}/assembly/${assemblyId}/package?export_all=true&format=csv&include_previous=${includePreviousPackages}`;
-                                        }
-                                    }
-
-                                    window.location = url;
+                                    exportAllData('csv', 'all_data.csv');
                                 }
                             },
                             // Экспорт текущей страницы в Excel
@@ -471,16 +652,11 @@ document.addEventListener('DOMContentLoaded', function () {
                                 text: 'Export Current Page to Excel',
                                 action: function (e, dt, button, config) {
                                     const visibleColumns = dt.columns(':visible').indexes().toArray();
-
-                                    // Получаем заголовки видимых столбцов
                                     const headers = visibleColumns.map(index => dt.column(index).header().innerText);
-
-                                    // Получаем данные из видимых столбцов
                                     const data = dt.rows({ page: 'current' }).indexes().toArray().map(rowIdx => {
                                         const rowData = {};
                                         visibleColumns.forEach((colIdx, i) => {
-                                            const cellData = dt.cell(rowIdx, colIdx).data();
-                                            rowData[headers[i]] = cellData;
+                                            rowData[headers[i]] = dt.cell(rowIdx, colIdx).data();
                                         });
                                         return rowData;
                                     });
@@ -489,30 +665,13 @@ document.addEventListener('DOMContentLoaded', function () {
                                     const workbook = XLSX.utils.book_new();
                                     XLSX.utils.book_append_sheet(workbook, worksheet, 'Current Page');
                                     XLSX.writeFile(workbook, 'current_page.xlsx');
-
-                                    // Закрываем выпадающий список
-                                    dt.buttons('.buttons-collection').collection(false);
                                 }
                             },
                             // Экспорт всех данных в Excel
                             {
                                 text: 'Export All Data to Excel',
                                 action: function (e, dt, button, config) {
-                                    const hash = window.location.hash.substr(1);
-                                    const parts = hash.split('/');
-                                    let url = '';
-                                    let projectId, assemblyId;
-
-                                    if (parts[0] === 'projects') {
-                                        if (parts.length === 5 && parts[4] === 'package') {
-                                            projectId = parts[1];
-                                            assemblyId = parts[3];
-                                            const includePreviousPackages = document.getElementById('includePreviousPackages').checked ? 'true' : 'false';
-                                            url = `http://0.0.0.0:8000/projects/${projectId}/assembly/${assemblyId}/package?export_all=true&format=excel&include_previous=${includePreviousPackages}`;
-                                        }
-                                    }
-
-                                    window.location = url;
+                                    exportAllData('excel', 'all_data.xlsx');
                                 }
                             },
                             // Экспорт текущей страницы в PDF
@@ -520,82 +679,39 @@ document.addEventListener('DOMContentLoaded', function () {
                                 text: 'Export Current Page to PDF',
                                 action: function (e, dt, button, config) {
                                     const visibleColumns = dt.columns(':visible').indexes().toArray();
-
-                                    // Получаем заголовки видимых столбцов
                                     const headers = visibleColumns.map(index => dt.column(index).header().innerText);
-
-                                    // Получаем данные из видимых столбцов
                                     const data = dt.rows({ page: 'current' }).indexes().toArray().map(rowIdx => {
-                                        return visibleColumns.map(colIdx => {
-                                            return dt.cell(rowIdx, colIdx).data();
-                                        });
+                                        return visibleColumns.map(colIdx => dt.cell(rowIdx, colIdx).data());
                                     });
 
                                     const doc = new window.jspdf.jsPDF();
-
                                     doc.autoTable({
                                         head: [headers],
                                         body: data
                                     });
                                     doc.save('current_page.pdf');
-
-                                    // Закрываем выпадающий список
-                                    dt.buttons('.buttons-collection').collection(false);
                                 }
                             },
                             // Экспорт всех данных в PDF
                             {
                                 text: 'Export All Data to PDF',
                                 action: function (e, dt, button, config) {
-                                    const hash = window.location.hash.substr(1);
-                                    const parts = hash.split('/');
-                                    let url = '';
-                                    let projectId, assemblyId;
-
-                                    if (parts[0] === 'projects') {
-                                        if (parts.length === 5 && parts[4] === 'package') {
-                                            projectId = parts[1];
-                                            assemblyId = parts[3];
-                                            const includePreviousPackages = document.getElementById('includePreviousPackages').checked ? 'true' : 'false';
-                                            url = `http://0.0.0.0:8000/projects/${projectId}/assembly/${assemblyId}/package?export_all=true&format=pdf&include_previous=${includePreviousPackages}`;
-                                        }
-                                    }
-
-                                    window.location = url;
+                                    exportAllData('pdf', 'all_data.pdf');
                                 }
                             },
                             // Печать текущей страницы
                             {
                                 text: 'Print Current Page',
                                 action: function (e, dt, button, config) {
-                                    dt.button('.buttons-print').trigger();
-
-                                    // Закрываем выпадающий список
-                                    dt.buttons('.buttons-collection').collection(false);
+                                    const data = dt.rows({ page: 'current' }).data().toArray();
+                                    printData(data);
                                 }
                             },
                             // Печать всех данных
                             {
                                 text: 'Print All Data',
                                 action: function (e, dt, button, config) {
-                                    const hash = window.location.hash.substr(1);
-                                    const parts = hash.split('/');
-                                    let url = '';
-                                    let projectId, assemblyId;
-
-                                    if (parts[0] === 'projects') {
-                                        if (parts.length === 5 && parts[4] === 'package') {
-                                            projectId = parts[1];
-                                            assemblyId = parts[3];
-                                            const includePreviousPackages = document.getElementById('includePreviousPackages').checked ? 'true' : 'false';
-                                            url = `http://0.0.0.0:8000/projects/${projectId}/assembly/${assemblyId}/package?export_all=true&format=print&include_previous=${includePreviousPackages}`;
-                                        }
-                                    }
-
-                                    window.open(url, '_blank');
-
-                                    // Закрываем выпадающий список
-                                    dt.buttons('.buttons-collection').collection(false);
+                                    exportAllData('print');
                                 }
                             }
                         ]
@@ -636,7 +752,9 @@ document.addEventListener('DOMContentLoaded', function () {
                             const projectId = window.location.hash.split('/')[1];
                             const assemblyId = window.location.hash.split('/')[3];
                             const packageId = selectedRowData.pkg_id;
-                            window.location.hash = `#projects/${projectId}/assembly/${assemblyId}/package/${packageId}/vulnerabilities`;
+                            const packageName = selectedRowData.pkg_name;
+                            window.location.hash = `#projects/${projectId}/assembly/${assemblyId}/package/${packageName}/vulnerabilities`;
+                            // window.location.hash = `#projects/${projectId}/assembly/${assemblyId}/package/${packageId}/vulnerabilities`;
                         },
                         enabled: false
                     },
@@ -821,7 +939,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         version: rowData.version
                     };
 
-                    window.location.hash = `#projects/${projectId}/assembly/${assemblyId}/package/${packageId}/changelog`;
+                    window.location.hash = `#projects/${projectId}/assembly/${assemblyId}/packages/${packageId}/changelog`;
                 }
 
                 // Редактирование по двойному клику на другие столбцы
@@ -1021,6 +1139,12 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     document.getElementById('tracker-tab').addEventListener('click', function() {
+        // const selectedRow = table?.row({ selected: true }).data();
+        // if (!selectedRow) {
+        //     clearDataPanel();
+        //     return;
+        // }
+
         currentTab = 'tracker';
         document.getElementById('tracker-tab').classList.add('active');
         document.getElementById('bdu-tab').classList.remove('active');
@@ -1028,6 +1152,12 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     document.getElementById('bdu-tab').addEventListener('click', function() {
+        // const selectedRow = table?.row({ selected: true }).data();
+        // if (!selectedRow) {
+        //     clearDataPanel();
+        //     return;
+        // }
+
         currentTab = 'bdu';
         document.getElementById('bdu-tab').classList.add('active');
         document.getElementById('tracker-tab').classList.remove('active');
@@ -1088,6 +1218,7 @@ function getCVEFilters() {
 
 function updateDataPanel(rowData) {
     if (!rowData) return;
+
     // Сохраняем данные CVE из дебтракера
     currentCVEData.tracker.name = rowData.cve_name;
     currentCVEData.tracker.description = rowData.cve_desc || 'Описание недоступно';
@@ -1151,37 +1282,42 @@ function updateDescriptionPanel() {
     const cvss2Header = document.getElementById('cvss2-header');
     const cvss3Header = document.getElementById('cvss3-header');
 
-    if (!currentCVEData) {
-        console.error('No current CVE data available!');
+    if (!currentCVEData || !currentCVEData.tracker || !currentCVEData.bdu) {
+        clearDataPanel();
         return;
     }
 
     if (currentTab === 'tracker') {
+        if (titleElement) titleElement.textContent = currentCVEData.tracker.name || 'No CVE Selected';
         if (titleLink) {
-            titleLink.textContent = currentCVEData.tracker.name;
-            titleLink.href = `https://security-tracker.debian.org/tracker/${currentCVEData.tracker.name}`;
+            titleLink.textContent = currentCVEData.tracker.name || '';
+            titleLink.href = currentCVEData.tracker.name
+                ? `https://security-tracker.debian.org/tracker/${currentCVEData.tracker.name}`
+                : '#';
         }
         if (descriptionTextarea) {
-            descriptionTextarea.value = currentCVEData.tracker.description;
+            descriptionTextarea.value = currentCVEData.tracker.description || 'Description not available';
         }
         if (bduAdditionalInfo) {
             bduAdditionalInfo.style.display = 'none';
         }
     } else if (currentTab === 'bdu') {
-        const vulIdentLinkPart = currentCVEData.bdu.vul_ident.substring(4);
-
+        const vulIdentLinkPart = currentCVEData.bdu.vul_ident.substring(4) || '';
+        if (titleElement) titleElement.textContent = currentCVEData.bdu.vul_ident || 'No CVE Selected';
         if (titleLink) {
-            titleLink.textContent = currentCVEData.bdu.vul_ident;
-            titleLink.href = `https://bdu.fstec.ru/vul/${vulIdentLinkPart}`;
+            titleLink.textContent = currentCVEData.bdu.vul_ident || '';
+            titleLink.href = vulIdentLinkPart
+                ? `https://bdu.fstec.ru/vul/${vulIdentLinkPart}`
+                : '#';
         }
         if (descriptionTextarea) {
-            descriptionTextarea.value = currentCVEData.bdu.vul_desc;
+            descriptionTextarea.value = currentCVEData.bdu.vul_desc || 'Description not available';
         }
         if (bduAdditionalInfo) {
             bduAdditionalInfo.style.display = 'block';
         }
         if (bduDateDiscovered) {
-            bduDateDiscovered.textContent = currentCVEData.bdu.date_discovered;
+            bduDateDiscovered.textContent = currentCVEData.bdu.date_discovered || 'Unknown';
         }
 
         // Обновляем CVSS2 заголовок
@@ -1222,6 +1358,23 @@ function updateDescriptionPanel() {
     }
 }
 
+function resetCurrentCVEData() {
+    currentCVEData = {
+        tracker: {
+            name: '',
+            description: ''
+        },
+        bdu: {
+            vul_ident: '',
+            vul_desc: '',
+            date_discovered: '',
+            cvss2_vector: '',
+            cvss2_score: null,
+            cvss3_vector: '',
+            cvss3_score: null
+        }
+    };
+}
 
 function getColorByScore(score) {
     if (score >= 4.0 && score <= 6.9) {
@@ -1334,7 +1487,7 @@ function getNextLevelButtonText() {
             return 'Packages';
         } else if (parts.length === 5 && parts[4] === 'package') {
             return 'Changelog';
-        } else if (parts.length === 7 && parts[4] === 'package' && parts[6] === 'changelog') {
+        } else if (parts.length === 7 && parts[4] === 'packages' && parts[6] === 'changelog') {
             return '';
         }
     } else if (hash === 'cve') {
@@ -1368,7 +1521,7 @@ function navigateToNextLevel(selectedRowData) {
                 version: selectedRowData.version
             };
 
-            window.location.hash = `#projects/${projectId}/assembly/${assemblyId}/package/${packageId}/changelog`;
+            window.location.hash = `#projects/${projectId}/assembly/${assemblyId}/packages/${packageId}/changelog`;
         }
     }
 }
@@ -1655,9 +1808,9 @@ function clearDataPanel() {
     const cvss3Header = document.getElementById('cvss3-header');
     const cveLinks = document.getElementById('cve-links');
 
-    if (titleElement) titleElement.textContent = 'Loading...';
+    if (titleElement) titleElement.textContent = 'No CVE Selected';
     if (titleLink) {
-        titleLink.textContent = 'Loading...';
+        titleLink.textContent = '';
         titleLink.href = '#';
     }
     if (descriptionTextarea) descriptionTextarea.value = '';
@@ -1675,6 +1828,98 @@ function clearDataPanel() {
 
     console.log('Data panel cleared');
 }
+
+function exportAllData(format, filename) {
+    const hash = window.location.hash.substr(1);
+    const parts = hash.split('/');
+    let apiUrl = 'http://0.0.0.0:8000';
+
+    // Определяем URL API для текущей страницы
+    if (parts[0] === 'projects' && parts.length === 1) {
+        apiUrl += '/projects';
+    } else if (parts[0] === 'projects' && parts.length === 3 && parts[2] === 'assembly') {
+        apiUrl += `/projects/${parts[1]}/assembly`;
+    } else if (parts[0] === 'projects' && parts.length === 5 && parts[4] === 'package') {
+        apiUrl += `/projects/${parts[1]}/assembly/${parts[3]}/package`;
+    } else if (parts[0] === 'projects' && parts.length === 7 && parts[4] === 'packages' && parts[6] === 'changelog') {
+        apiUrl += `/projects/${parts[1]}/assembly/${parts[3]}/packages/${parts[5]}/changelog`;
+    } else if (parts[0] === 'projects' && parts.length === 7 && parts[4] === 'package' && parts[6] === 'vulnerabilities') {
+        apiUrl += `/projects/${parts[1]}/assembly/${parts[3]}/package/${parts[5]}/vulnerabilities`;
+    } else if (parts[0] === 'cve') {
+        apiUrl += '/cve';
+    }
+
+
+    if (!apiUrl) {
+        console.error('API URL not defined for the current page.');
+        return;
+    }
+
+    const includeJoint = document.getElementById('includeJoint')?.checked ? 'true' : 'false';
+
+    fetch(`${apiUrl}?export_all=true&format=${format}&include_joint=${includeJoint}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Failed to fetch export data: ${response.statusText}`);
+            }
+
+            // Определяем тип ответа
+            const contentDisposition = response.headers.get('Content-Disposition');
+            const isAttachment = contentDisposition && contentDisposition.includes('attachment');
+
+            if (format === 'csv' || format === 'pdf' || format === 'excel') {
+                return response.blob().then(blob => ({ blob, isAttachment }));
+            } else if (format === 'print') {
+                return response.text();
+            } else {
+                throw new Error('Unsupported export format');
+            }
+        })
+        .then(result => {
+            if (format === 'csv' || format === 'pdf' || format === 'excel') {
+                const blob = result.blob;
+                const isAttachment = result.isAttachment;
+                const fileUrl = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+
+                link.href = fileUrl;
+                link.download = filename || `export.${format === 'csv' ? 'csv' : format === 'pdf' ? 'pdf' : 'xlsx'}`;
+
+                if (isAttachment) {
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(fileUrl);
+                } else {
+                    window.open(fileUrl, '_blank');
+                }
+            } else if (format === 'print') {
+                printData(result);
+            }
+        })
+        .catch(error => console.error('Export failed:', error));
+}
+
+
+function downloadFile(data, filename, mimeType) {
+    const blob = new Blob([data], { type: mimeType });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function printData(data) {
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write('<html><head><title>Print</title></head><body>');
+    printWindow.document.write('<pre>' + JSON.stringify(data, null, 2) + '</pre>');
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+    printWindow.print();
+}
+
 
 
 function updateFooterDates() {

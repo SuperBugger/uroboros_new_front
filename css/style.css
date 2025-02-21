@@ -367,8 +367,8 @@ h4, h5, .section-title {
 
 .modal-content {
     background-color: #fefefe;
-    margin-top: 180px;
     margin: 10% auto;
+    margin-top: 180px;
     padding: 20px;
     border: 1px solid #888;
     width: 33%;
@@ -428,4 +428,8 @@ h4, h5, .section-title {
 
 .table td, .table th{
     padding: 0.5rem !important;
+}
+
+.ml-auto{
+    margin-left: 0 !important;
 }

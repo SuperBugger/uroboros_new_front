@@ -180,6 +180,13 @@ var vulnerabilitiesButton;
 var nextLevelButton;
 
 document.addEventListener('DOMContentLoaded', function () {
+    const authButton = document.getElementById('auth-button');
+    const authModal = document.getElementById('auth-modal');
+    const authModalClose = document.getElementById('auth-modal-close');
+    const loginTab = document.getElementById('login-tab');
+    const registerTab = document.getElementById('register-tab');
+    const loginFormContainer = document.getElementById('login-form-container');
+    const registerFormContainer = document.getElementById('register-form-container');
 
     function updateContent() {
         const hash = window.location.hash.substring(1) || 'projects';
@@ -198,7 +205,8 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 updateDataPanel(selectedRow);
             }
-        } else {
+        }
+        else {
             clearDataPanel();
             resetCurrentCVEData();
         }
@@ -941,75 +949,34 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     window.location.hash = `#projects/${projectId}/assembly/${assemblyId}/packages/${packageId}/changelog`;
                 }
-
-                // Редактирование по двойному клику на другие столбцы
-                if (cell.hasClass('editable')) {
-                    const originalText = cell.text();
-                    const input = $('<input>', {
-                        type: 'text',
-                        value: originalText
-                    });
-
-                    cell.empty().append(input);
-                    input.focus();
-
-                    input.on('blur', function () {
-                        const newValue = input.val();
-                        cell.text(newValue);
-
-                        const rowId = rowData['prj_id'] || rowData['assm_id'] || rowData['pkg_vrs_id'];
-
-                        // Получаем все столбцы, включая скрытые, чтобы правильно идентифицировать измененный столбец
-                        const allColumns = $('#data-table').DataTable().settings().init().columns;
-                        const visibleColumnIndex = cell.index(); // Индекс видимого столбца в таблице
-
-                        // Определяем реальный индекс столбца в массиве всех столбцов
-                        let realColumnIndex = -1;
-                        let visibleIndex = 0;
-
-                        for (let i = 0; i < allColumns.length; i++) {
-                            if (allColumns[i].visible === false) continue; // Пропускаем скрытые столбцы
-                            if (visibleIndex === visibleColumnIndex) {
-                                realColumnIndex = i;
-                                break;
-                            }
-                            visibleIndex++;
-                        }
-
-                        // Проверяем, что получили корректный индекс
-                        if (realColumnIndex === -1) {
-                            console.error('Не удалось определить реальный индекс столбца.');
-                            return;
-                        }
-
-                        const columnName = allColumns[realColumnIndex].data;
-
-                        // Определяем тип ресурса на основе контекста
-                        let resourceType;
-                        if (rowData.hasOwnProperty('prj_id')) {
-                            resourceType = 'project';
-                        } else if (rowData.hasOwnProperty('assm_id')) {
-                            resourceType = 'assembly';
-                        } else if (rowData.hasOwnProperty('pkg_vrs_id')) {
-                            resourceType = 'package';
-                        }
-
-                        // Отправка запроса на сервер с правильным столбцом
-                        updateServerData(rowId, columnName, newValue, resourceType);
-                    });
-
-
-
-                    input.on('keydown', function (event) {
-                        if (event.key === 'Enter') {
-                            input.blur();
-                        }
-                    });
-                }
             });
+
+            // Привязка обработчика dblclick к ячейкам, имеющим класс 'editable'
+            $('#data-table tbody').on('dblclick', 'td.editable', handleEditableDblClick);
 
         } else {
             showErrorMessage();
+        }
+    }
+
+    // Функция обновления области авторизации в Navbar
+    function updateAuthArea() {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const authArea = document.getElementById('auth-area');
+        if (currentUser && currentUser.username) {
+            authArea.innerHTML = `
+        <span style="margin-right:10px;">Привет, ${currentUser.username}</span>
+        <button class="btn btn-secondary" id="logout-button">Выход</button>
+      `;
+            document.getElementById('logout-button').addEventListener('click', function() {
+                localStorage.removeItem('currentUser');
+                updateAuthArea();
+            });
+        } else {
+            authArea.innerHTML = `<button class="btn btn-secondary" id="auth-button">Вход/Регистрация</button>`;
+            document.getElementById('auth-button').addEventListener('click', function() {
+                authModal.style.display = 'block';
+            });
         }
     }
 
@@ -1127,6 +1094,94 @@ document.addEventListener('DOMContentLoaded', function () {
         openStatsModal();
     });
 
+    // Открытие модального окна
+    authButton.addEventListener('click', function() {
+        authModal.style.display = 'block';
+    });
+
+    // Закрытие модального окна
+    authModalClose.addEventListener('click', function() {
+        authModal.style.display = 'none';
+    });
+
+    // Переключение между вкладками
+    loginTab.addEventListener('click', function() {
+        loginTab.classList.add('active');
+        registerTab.classList.remove('active');
+        loginFormContainer.style.display = 'block';
+        registerFormContainer.style.display = 'none';
+    });
+
+    registerTab.addEventListener('click', function() {
+        registerTab.classList.add('active');
+        loginTab.classList.remove('active');
+        registerFormContainer.style.display = 'block';
+        loginFormContainer.style.display = 'none';
+    });
+
+    // Обработка отправки формы входа
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+
+        fetch('http://0.0.0.0:8000/auth/login', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({email: email, password: password})
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Сохраняем данные пользователя (например, username и роль)
+                    localStorage.setItem('currentUser', JSON.stringify(data.user));
+                    updateAuthArea();
+                    authModal.style.display = 'none';
+                } else {
+                    alert('Ошибка входа: ' + data.message);
+                }
+            })
+            .catch(err => console.error(err));
+    });
+
+    // Обработка отправки формы регистрации
+    document.getElementById('register-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const username = document.getElementById('register-username').value;
+        const email = document.getElementById('register-email').value;
+        const password = document.getElementById('register-password').value;
+        const confirmPassword = document.getElementById('register-confirm-password').value;
+        const adminCode = document.getElementById('admin-code').value;
+
+        if (password !== confirmPassword) {
+            alert('Пароли не совпадают!');
+            return;
+        }
+
+        fetch('http://0.0.0.0:8000/auth/register', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                username: username,
+                email: email,
+                password: password,
+                admin_code: adminCode
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Опционально можно сразу выполнить вход после регистрации
+                    localStorage.setItem('currentUser', JSON.stringify(data.user));
+                    updateAuthArea();
+                    authModal.style.display = 'none';
+                } else {
+                    alert('Ошибка регистрации: ' + data.message);
+                }
+            })
+            .catch(err => console.error(err));
+    });
+
     document.getElementById('filter-toggle-button').addEventListener('click', function() {
         document.getElementById('cve-filter-panel').classList.toggle('open');
         document.getElementById('filter-toggle-button').classList.toggle('filter-toggle-button_open');
@@ -1181,6 +1236,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     updateFooterDates();
+    updateAuthArea();
+    disableEditingForNonAdmins();
 })
 
 function getCVEFilters() {
@@ -1271,7 +1328,6 @@ function fetchBDUData(cveName) {
             }
         });
 }
-
 
 function updateDescriptionPanel() {
     const titleElement = document.getElementById('cve-title');
@@ -1458,6 +1514,89 @@ function fetchCVELinks(cveName) {
         .catch(error => {
             console.error('Ошибка при получении ссылок для CVE:', error);
         });
+}
+
+function handleEditableDblClick(event) {
+    // Проверяем роль пользователя, извлекая данные из localStorage
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser || currentUser.role !== 'admin') {
+        // Если пользователь не админ, отменяем редактирование
+        return;
+    }
+
+    const cell = $(this);
+    const row = cell.closest('tr');
+    const rowData = $('#data-table').DataTable().row(row).data();
+
+    // Запускаем редактирование для ячейки
+    const originalText = cell.text();
+    const input = $('<input>', {
+        type: 'text',
+        value: originalText
+    });
+
+    cell.empty().append(input);
+    input.focus();
+
+    input.on('blur', function () {
+        const newValue = input.val();
+        cell.text(newValue);
+
+        const rowId = rowData['prj_id'] || rowData['assm_id'] || rowData['pkg_vrs_id'];
+
+        // Получаем все столбцы, включая скрытые, чтобы правильно идентифицировать изменённый столбец
+        const allColumns = $('#data-table').DataTable().settings().init().columns;
+        const visibleColumnIndex = cell.index(); // Индекс видимого столбца в таблице
+
+        // Определяем реальный индекс столбца в массиве всех столбцов
+        let realColumnIndex = -1;
+        let visibleIndex = 0;
+
+        for (let i = 0; i < allColumns.length; i++) {
+            if (allColumns[i].visible === false) continue; // Пропускаем скрытые столбцы
+            if (visibleIndex === visibleColumnIndex) {
+                realColumnIndex = i;
+                break;
+            }
+            visibleIndex++;
+        }
+
+        if (realColumnIndex === -1) {
+            console.error('Не удалось определить реальный индекс столбца.');
+            return;
+        }
+
+        const columnName = allColumns[realColumnIndex].data;
+
+        // Определяем тип ресурса на основе контекста
+        let resourceType;
+        if (rowData.hasOwnProperty('prj_id')) {
+            resourceType = 'project';
+        } else if (rowData.hasOwnProperty('assm_id')) {
+            resourceType = 'assembly';
+        } else if (rowData.hasOwnProperty('pkg_vrs_id')) {
+            resourceType = 'package';
+        }
+
+        // Отправка запроса на сервер с правильным столбцом
+        updateServerData(rowId, columnName, newValue, resourceType);
+    });
+
+    input.on('keydown', function (event) {
+        if (event.key === 'Enter') {
+            input.blur();
+        }
+    });
+}
+
+function disableEditingForNonAdmins() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser || currentUser.role !== 'admin') {
+        // Убираем возможность редактирования для всех ячеек с классом 'editable'
+        $('#data-table tbody td.editable').off('dblclick', handleEditableDblClick);
+        // Также можно добавить визуальное оформление, чтобы показать, что редактирование недоступно
+        $('#data-table tbody td.editable').css('cursor', 'not-allowed');
+    }
 }
 
 
@@ -1751,7 +1890,6 @@ async function fetchResourceInfo(resource, resourceId, contextKey, defaultValue)
     }
 }
 
-
 function openStatsModal() {
     const modal = document.getElementById('stats-modal');
     const closeButton = document.getElementById('stats-modal-close');
@@ -1900,7 +2038,6 @@ function exportAllData(format, filename) {
         .catch(error => console.error('Export failed:', error));
 }
 
-
 function downloadFile(data, filename, mimeType) {
     const blob = new Blob([data], { type: mimeType });
     const link = document.createElement('a');
@@ -1919,8 +2056,6 @@ function printData(data) {
     printWindow.document.close();
     printWindow.print();
 }
-
-
 
 function updateFooterDates() {
     fetch('http://0.0.0.0:8000/api/stats')
