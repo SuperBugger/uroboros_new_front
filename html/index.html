@@ -29,6 +29,38 @@
 <!--    &lt;!&ndash; DataTables Select JS &ndash;&gt;-->
 <!--    <script type="text/javascript" src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.js"></script>-->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://unpkg.com/i18next@21.6.3/dist/umd/i18next.min.js"></script>
+    <script src="https://unpkg.com/i18next-xhr-backend@3.2.2/dist/umd/i18nextXHRBackend.min.js"></script>
+    <script>
+        // Инициализация i18next
+        i18next
+            .use(i18nextXHRBackend)
+            .init({
+                backend: {
+                    loadPath: '/localization/{{lng}}.json'
+                },
+                fallbackLng: 'ru',
+                debug: true,
+                lng: navigator.language || navigator.userLanguage  // Автоматически определяем язык браузера
+            }, function(err, t) {
+                // После инициализации обновляем все элементы с data-i18n
+                updateContentTranslations();
+            });
+
+        // Функция, которая проходит по всем элементам с атрибутом data-i18n и обновляет их текст
+        function updateContentTranslations() {
+            document.querySelectorAll('[data-i18n]').forEach(function(elem) {
+                const key = elem.getAttribute('data-i18n');
+                elem.textContent = i18next.t(key);
+            });
+
+            // Элементы с атрибутом placeholder можно обновить
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(function(elem) {
+                const key = elem.getAttribute('data-i18n-placeholder');
+                elem.setAttribute('placeholder', i18next.t(key));
+            });
+        }
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
 <body style="display: flex; flex-direction: column;">
@@ -41,11 +73,11 @@
 <nav class="main-header navbar navbar-expand navbar-light navbar-white" style="margin-left: 0 !important;">
     <div class="dt-buttons btn-group" style="margin-bottom: 0 !important; width: auto;">
         <button type="button" style="flex: 0;" class="btn btn-secondary dropdown-toggle" id="menu-button">
-            <i class="fas fa-bars"></i> Меню
+            <i class="fas fa-bars"></i> <span data-i18n="menu">Меню</span>
         </button>
         <ul class="dropdown-menu" id="menu-dropdown" style="display: none;">
-            <li><a class="dropdown-item" href="#" id="menu-cve">Журнал уязвимостей</a></li>
-            <li><a class="dropdown-item" href="#" id="menu-stats">Статистика</a></li>
+            <li><a class="dropdown-item" href="#" id="menu-cve" data-i18n="vulnerabilityJournal">Журнал уязвимостей</a></li>
+            <li><a class="dropdown-item" href="#" id="menu-stats" data-i18n="statistics">Статистика</a></li>
         </ul>
     </div>
 
@@ -55,7 +87,7 @@
     </a>
 
     <div class="navbar-nav ml-auto" id="auth-area">
-        <button class="btn btn-secondary" id="auth-button">Вход/Регистрация</button>
+        <button class="btn btn-secondary" id="auth-button" data-i18n="loginRegister">Вход/Регистрация</button>
     </div>
 
 </nav>
@@ -70,7 +102,7 @@
     <!-- Button Rows -->
     <div id="package-checkbox">
         <label>
-            <input type="checkbox" id="includeJoint"> Совместные
+            <input type="checkbox" id="includeJoint"> <span data-i18n="joint">Совместные</span>
         </label>
     </div>
 
@@ -78,7 +110,7 @@
         <!-- Table -->
         <div id="data-table-container">
             <div id="custom-search-container">
-                <input type="text" id="custom-search-input" placeholder="Search...">
+                <input type="text" id="custom-search-input" data-i18n-placeholder="searchPlaceholder" placeholder="Search...">
                 <button id="custom-search-button"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-funnel" viewBox="0 0 16 16">
                     <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5v-2zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2h-11z"/>
                 </svg></button>
@@ -92,17 +124,17 @@
         <!-- Side Panels -->
         <div id="cve-panels" style="display: none; min-width: 300px">
             <div id="cve-data-panel" style="flex-direction: column">
-                <h4 id="cve-title"><a href="#" target="_blank" id="cve-title-link">Название уязвимости</a></h4>
+                <h4 id="cve-title"><a href="#" target="_blank" id="cve-title-link" data-i18n="joint">Название уязвимости</a></h4>
                 <div>
                     <button id="tracker-tab" class="tab-button active">Tracker</button>
                     <button id="bdu-tab" class="tab-button">BDU</button>
                 </div>
-                <h5>Описание</h5>
+                <h5 data-i18n="description">Описание</h5>
                 <textarea id="textarea-cve-description" readonly="readonly" class="textarea-cve-description"></textarea>
                 <div id="cve-links"></div>
                 <div id="bdu-additional-info" style="display: none;">
-                    <h5>Дата обнаружения</h5>
-                    <p id="bdu-date-discovered">Дата обнаружения</p>
+                    <h5 data-i18n="dateDiscovered">Дата обнаружения</h5>
+                    <p id="bdu-date-discovered" data-i18n="dateDiscovered">Дата обнаружения</p>
 
                     <div style="display: flex; justify-content: space-between; margin-right: 26px;">
                         <!-- Заголовок CVSS2 -->
@@ -114,49 +146,49 @@
                 </div>
             </div>
 
-            <button id="filter-toggle-button" class="button-accent">Filters</button>
+            <button id="cve-filter-toggle-button" class="button-accent" data-i18n="filters">Filters</button>
 
             <div id="cve-filter-panel" class="cve-filter-panel">
 
-                <h4>Фильтры</h4>
+                <h4 data-i18n="filters">Фильтры</h4>
                 <form id="cve-filters-form">
 
                     <!-- Срочность -->
                     <div>
-                        <label><strong>Срочность:</strong></label><br>
-                        <input type="checkbox" name="urgency" value="not yet assigned"> Не назначена<br>
-                        <input type="checkbox" name="urgency" value="unimportant"> Неважна<br>
-                        <input type="checkbox" name="urgency" value="low"> Низкая<br>
-                        <input type="checkbox" name="urgency" value="medium"> Средняя<br>
-                        <input type="checkbox" name="urgency" value="high"> Высокая<br>
-                        <input type="checkbox" name="urgency" value="end-of-life"> Окончание жизни<br>
+                        <label><strong data-i18n="urgency">Срочность:</strong></label><br>
+                        <input type="checkbox" name="urgency" value="not yet assigned"> <span data-i18n="urgency.notAssigned" ></span><br>
+                        <input type="checkbox" name="urgency" value="unimportant"> <span data-i18n="urgency.unimportant" ></span><br>
+                        <input type="checkbox" name="urgency" value="low"> <span data-i18n="urgency.low" ></span><br>
+                        <input type="checkbox" name="urgency" value="medium"> <span data-i18n="urgency.medium" ></span><br>
+                        <input type="checkbox" name="urgency" value="high"> <span data-i18n="urgency.high" ></span><br>
+                        <input type="checkbox" name="urgency" value="end-of-life"> <span data-i18n="urgency.endOfLife" ></span><br>
                     </div>
 
                     <!-- Статус -->
                     <div>
-                        <label><strong>Статус:</strong></label><br>
-                        <input type="checkbox" name="status" value="undetermined"> Недетерминирован<br>
-                        <input type="checkbox" name="status" value="resolved"> Разрешён<br>
-                        <input type="checkbox" name="status" value="open"> Открыт<br>
+                        <label><strong data-i18n="status">Статус:</strong></label><br>
+                        <input type="checkbox" name="status" value="undetermined"> <span data-i18n="undetermined" ></span><br>
+                        <input type="checkbox" name="status" value="resolved"> <span data-i18n="resolved" ></span><br>
+                        <input type="checkbox" name="status" value="open"> <span data-i18n="open" ></span><br>
                     </div>
 
                     <!-- Уровень оценки -->
                     <div>
-                        <label><strong>Уровень оценки:</strong></label><br>
+                        <label><strong data-i18n="severityLevel">Уровень оценки:</strong></label><br>
                         <label style="font-weight: 100;">
-                            <input type="checkbox" name="severity_level" value="unknown"> Неизвестен
+                            <input type="checkbox" name="severity_level" value="unknown"> <span data-i18n="level.unknown" ></span>
                         </label><br>
                         <label style="font-weight: 100;">
-                            <input type="checkbox" name="severity_level" value="low"> Низкий
+                            <input type="checkbox" name="severity_level" value="low"> <span data-i18n="level.low" ></span>
                         </label><br>
                         <label style="color: #ffc107; font-weight: 100;">
-                            <input type="checkbox" name="severity_level" value="medium"> Средний
+                            <input type="checkbox" name="severity_level" value="medium"> <span data-i18n="level.medium" ></span>
                         </label><br>
                         <label style="color: #d56202; font-weight: 100;">
-                            <input type="checkbox" name="severity_level" value="high"> Высокий
+                            <input type="checkbox" name="severity_level" value="high"> <span data-i18n="level.high" ></span>
                         </label><br>
                         <label style="color: red; font-weight: 100;">
-                            <input type="checkbox" name="severity_level" value="critical"> Критический
+                            <input type="checkbox" name="severity_level" value="critical"> <span data-i18n="level.critical" ></span>
                         </label><br>
                     </div>
 
@@ -169,53 +201,80 @@
                         <!--                    <label for="time_detection_end">До:</label>-->
                         <!--                    <input type="date" id="time_detection_end" name="time_detection_end"><br>-->
                         <div>
-                            <label for="date_discovered_start">Start Date:</label>
+                            <label for="date_discovered_start" data-i18n="dateStart">Start Date:</label>
                             <input type="date" id="date_discovered_start" name="date_discovered_start">
                         </div>
                         <div>
-                            <label for="date_discovered_end">End Date:</label>
+                            <label for="date_discovered_end" data-i18n="dateEnd">End Date:</label>
                             <input type="date" id="date_discovered_end" name="date_discovered_end">
                         </div>
                     </div>
 
 
                     <!-- Рецензия уязвимости -->
-<!--                    <div>-->
-<!--                        <label><strong>Рецензия уязвимости:</strong></label><br>-->
-<!--                        <input type="checkbox" name="vul_review" value="не рецензирована"> Не рецензирована<br>-->
-<!--                        <input type="checkbox" name="vul_review" value="директивно разрешена"> Директивно разрешена<br>-->
-<!--                        <input type="checkbox" name="vul_review" value="не подтверждена"> Не подтверждена<br>-->
-<!--                        <input type="checkbox" name="vul_review" value="источник не исправлен"> Источник не исправлен<br>-->
-<!--                    </div>-->
+                    <!--                    <div>-->
+                    <!--                        <label><strong>Рецензия уязвимости:</strong></label><br>-->
+                    <!--                        <input type="checkbox" name="vul_review" value="не рецензирована"> Не рецензирована<br>-->
+                    <!--                        <input type="checkbox" name="vul_review" value="директивно разрешена"> Директивно разрешена<br>-->
+                    <!--                        <input type="checkbox" name="vul_review" value="не подтверждена"> Не подтверждена<br>-->
+                    <!--                        <input type="checkbox" name="vul_review" value="источник не исправлен"> Источник не исправлен<br>-->
+                    <!--                    </div>-->
 
                 </form>
-                <button id="apply-filters-button">Применить</button>
+                <button id="apply-filters-button" data-i18n="apply">Применить</button>
 
             </div>
 
         </div>
+
+        <div id="compare-panels">
+            <button id="compare-filter-toggle-button" class="button-accent" data-i18n="filters">Filters</button>
+
+            <div id="compare-filter-panel" class="compare-filter-panel">
+                <h4 data-i18n="filters">Фильтры сравнения</h4>
+                <form id="compare-filters-form">
+                    <div>
+                        <label><strong data-i18n="state">Состояние:</strong></label><br>
+                        <input type="checkbox" name="compare_state_filter" value="1"> Добавлен<br>
+                        <input type="checkbox" name="compare_state_filter" value="2"> Удален<br>
+                        <input type="checkbox" name="compare_state_filter" value="3"> Повышен<br>
+                        <input type="checkbox" name="compare_state_filter" value="4"> Понижен<br>
+                        <input type="checkbox" name="compare_state_filter" value="5"> Неизменен<br>
+                    </div>
+                    <div>
+                        <label><strong data-i18n="jointAssembly">Совместная сборка:</strong></label><br>
+                        <input type="checkbox" id="include_joint_previous" name="compare_joint" value="previous"> Предыдущая<br>
+                        <input type="checkbox" id="include_joint_current" name="compare_joint" value="current"> Текущая<br>
+                    </div>
+                    <button type="button" id="compare-filter-apply" data-i18n="apply">
+                        Применить
+                    </button>
+                </form>
+            </div>
+        </div>
+
     </div>
 
 </main>
 
 <!-- Main Footer -->
 <footer class="main-footer"  style="margin-left: 0 !important; display: flex; flex-direction: row-reverse; justify-content: space-between;">
-    <div class="float-right d-none d-sm-inline">В разработке</div>
+    <div class="float-right d-none d-sm-inline" data-i18n="inDevelop">В разработке</div>
     <div id="update-info">
         <p>BDU: <span id="last-update-bdu-footer"></span></p>
         <p>Debtracker: <span id="last-update-debtracker-footer"></span></p>
     </div>
-    <strong>Copyright &copy; 2021-2022 <a href="https://">NPPCT</a>. All rights reserved.</strong>
+    <strong>Copyright &copy; 2021-2022 <a href="https://">NPPCT</a>. <span data-i18n="allRightsReserved"> All rights reserved. </span></strong>
 </footer>
 
 <!-- Модальное окно статистики -->
 <div id="stats-modal" class="modal">
     <div class="modal-content">
         <span id="stats-modal-close" class="close">&times;</span>
-        <h2>Статистика</h2>
-        <p>Общее количество уязвимостей: <span id="total-vulnerabilities"></span></p>
-        <p>Последнее обновление BDU: <span id="last-update-bdu-modal"></span></p>
-        <p>Последнее обновление Debtracker: <span id="last-update-debtracker-modal"></span></p>
+        <h2 data-i18n="statistic">Статистика</h2>
+        <div style="display: flex"><p data-i18n="numberOfVulnerabilities">Общее количество уязвимостей: </p><span id="total-vulnerabilities"></span></div>
+        <div style="display: flex"><p data-i18n="lastBDUUpdate">Последнее обновление BDU: </p><span id="last-update-bdu-modal"></span></div>
+        <div style="display: flex"><p data-i18n="lastDebtrackerUpdate">Последнее обновление Debtracker: </p><span id="last-update-debtracker-modal"></span></div>
     </div>
 </div>
 
@@ -224,54 +283,66 @@
     <div class="modal-content">
         <span id="auth-modal-close" class="close">&times;</span>
         <div class="auth-tabs">
-            <button id="login-tab" class="tab-button active">Вход</button>
-            <button id="register-tab" class="tab-button">Регистрация</button>
+            <button id="login-tab" class="tab-button active" data-i18n="auth.login">Вход</button>
+            <button id="register-tab" class="tab-button" data-i18n="auth.register">Регистрация</button>
         </div>
         <!-- Форма входа -->
         <div id="login-form-container" class="auth-form">
-            <h2>Вход</h2>
+            <h2 data-i18n="login.title">Вход</h2>
             <form id="login-form">
                 <div class="form-group">
-                    <label for="login-email">Email</label>
+                    <label for="login-email" data-i18n="login.email">Email</label>
                     <input type="email" id="login-email" name="email" required>
                 </div>
                 <div class="form-group">
-                    <label for="login-password">Пароль</label>
+                    <label for="login-password" data-i18n="login.password">Пароль</label>
                     <input type="password" id="login-password" name="password" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Войти</button>
+                <button type="submit" class="btn btn-primary" data-i18n="login.button">Войти</button>
             </form>
         </div>
         <!-- Форма регистрации -->
         <div id="register-form-container" class="auth-form" style="display: none;">
-            <h2>Регистрация</h2>
+            <h2 data-i18n="register.title">Регистрация</h2>
             <form id="register-form">
                 <div class="form-group">
-                    <label for="register-username">Имя пользователя</label>
+                    <label for="register-username" data-i18n="register.name">Имя пользователя</label>
                     <input type="text" id="register-username" name="username" required>
                 </div>
                 <div class="form-group">
-                    <label for="register-email">Email</label>
+                    <label for="register-email" data-i18n="register.email">Email</label>
                     <input type="email" id="register-email" name="email" required>
                 </div>
                 <div class="form-group">
-                    <label for="admin-code">Admin Code</label>
+                    <label for="admin-code" data-i18n="register.adminCode">Admin Code</label>
                     <input type="text" id="admin-code" name="admin_code">
                 </div>
                 <div class="form-group">
-                    <label for="register-password">Пароль</label>
+                    <label for="register-password" data-i18n="register.password">Пароль</label>
                     <input type="password" id="register-password" name="password" required>
                 </div>
                 <div class="form-group">
-                    <label for="register-confirm-password">Подтверждение пароля</label>
+                    <label for="register-confirm-password" data-i18n="register.confirmPassword">Подтверждение пароля</label>
                     <input type="password" id="register-confirm-password" name="confirm_password" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+                <button type="submit" class="btn btn-primary" data-i18n="register.button">Зарегистрироваться</button>
             </form>
         </div>
     </div>
 </div>
 
+<!-- Модальное окно для выбора предыдущей сборки -->
+<div id="compareModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" id="compareModalClose">&times;</span>
+        <h3 data-i18n="selectPreviousAssembly">Выберите предыдущую сборку для сравнения</h3>
+        <select id="previous-assembly-select" class="form-control">
+            <!-- Опции заполнятся динамически через AJAX -->
+        </select>
+        <br>
+        <button id="compare-confirm-button" class="btn btn-primary" data-i18n="compare">Сравнить</button>
+    </div>
+</div>
 
 <!-- jQuery -->
 <script src="../plugins/jquery/jquery.min.js"></script>
@@ -333,6 +404,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 <!-- XLSX -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 
 
 <!-- JavaScript -->

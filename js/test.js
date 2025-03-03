@@ -5,10 +5,10 @@ const routeMap = [
         dataUrl: () => '/projects',
         tableColumns: [
             { data: 'prj_id', title: 'ID' },
-            { data: 'prj_name', title: 'Project Name', className: 'project-name' },
-            { data: 'prj_desc', title: 'Description', className: 'editable' },
-            { data: 'vendor', title: 'Vendor' },
-            { data: 'arch_name', title: 'Architecture' }
+            { data: 'prj_name', title: i18next.t('projectName') || 'Project Name', className: 'project-name' },
+            { data: 'prj_desc', title: i18next.t('description') || 'Description', className: 'editable' },
+            { data: 'vendor', title: i18next.t('vendor') || 'Vendor' },
+            { data: 'arch_name', title: i18next.t('architecture') || 'Architecture' }
         ]
     },
     {
@@ -16,10 +16,10 @@ const routeMap = [
         updateLinks: (match) => [`#projects`, `#projects/${match[1]}/assembly`],
         dataUrl: (match) => `/projects/${match[1]}/assembly`,
         tableColumns: [
-            { data: 'assm_id', title: 'Assembly ID' },
-            { data: 'assm_date_created', title: 'Date Created', className: 'assm-date' },
-            { data: 'assm_desc', title: 'Description', className: 'editable' },
-            { data: 'assm_version', title: 'Version' }
+            { data: 'assm_id', title: i18next.t('assemblyID') || 'Assembly ID' },
+            { data: 'assm_date_created', title: i18next.t('dateCreated') || 'Date Created', className: 'assm-date' },
+            { data: 'assm_desc', title: i18next.t('description') || 'Description', className: 'editable' },
+            { data: 'assm_version', title: i18next.t('version') || 'Version' }
         ]
     },
     {
@@ -27,11 +27,11 @@ const routeMap = [
         updateLinks: (match) => [`#projects`, `#projects/${match[1]}/assembly`, `#projects/${match[1]}/assembly/${match[2]}/package`],
         dataUrl: (match) => `/projects/${match[1]}/assembly/${match[2]}/package`,
         tableColumns: [
-            { data: 'pkg_name', title: 'Package Name', className: 'package-name' },
-            { data: 'pkg_vrs_id', title: 'Package Version ID' },
-            { data: 'version', title: 'Version' },
-            { data: 'author_name', title: 'Author' },
-            { data: 'pkg_date_created', title: 'Date Created' }
+            { data: 'pkg_name', title: i18next.t('packageName') || 'Package Name', className: 'package-name' },
+            { data: 'pkg_vrs_id', title: i18next.t('packageVersionID') || 'Package Version ID' },
+            { data: 'version', title: i18next.t('version') || 'Version' },
+            { data: 'author_name', title: i18next.t('author') || 'Author' },
+            { data: 'pkg_date_created', title: i18next.t('dateCreated') || 'Date Created' }
         ]
     },
     {
@@ -39,10 +39,10 @@ const routeMap = [
         updateLinks: (match) => [`#projects`, `#projects/${match[1]}/assembly`, `#projects/${match[1]}/assembly/${match[2]}/package`, `#projects/${match[1]}/assembly/${match[2]}/packages/${match[3]}/changelog`],
         dataUrl: (match) => `/projects/${match[1]}/assembly/${match[2]}/packages/${match[3]}/changelog`,
         tableColumns: [
-            { data: 'version', title: 'Version' },
-            { data: 'author_name', title: 'Author' },
-            { data: 'date_added', title: 'Date Added' },
-            { data: 'log_desc', title: 'Description' }
+            { data: 'version', title: i18next.t('version') || 'Version' },
+            { data: 'author_name', title: i18next.t('author') || 'Author' },
+            { data: 'date_added', title: i18next.t('dateCreated') || 'Date Added' },
+            { data: 'log_desc', title: i18next.t('description') || 'Description' }
         ]
     },
     {
@@ -50,15 +50,15 @@ const routeMap = [
         updateLinks: () => ['#cve'],
         dataUrl: () => '/cve',
         tableColumns: [
-            { data: 'cve_name', title: 'CVE Name' },
-            { data: 'pkg_name', title: 'Package Name' },
-            { data: 'rep_name', title: 'Repository Name' },
+            { data: 'cve_name', title: i18next.t('CVEName') || 'CVE Name' },
+            { data: 'pkg_name', title: i18next.t('packageName') || 'Package Name' },
+            { data: 'rep_name', title: i18next.t('repositoryName') || 'Repository Name' },
             // { data: 'rep_ver', title: 'Repository Version' },
-            { data: 'st_name', title: 'Status' },
-            { data: 'urg_name', title: 'Urgency' },
-            { data: 'severity_level', title: 'Severity Level' },
-            { data: 'date_discovered', title: 'Date Discovered' },
-            { data: 'cve_desc', title: 'Description', visible: false }
+            { data: 'st_name', title: i18next.t('status') || 'Status' },
+            { data: 'urg_name', title: i18next.t('urgency') || 'Urgency' },
+            { data: 'severity_level', title: i18next.t('severityLevel') || 'Severity Level' },
+            { data: 'date_discovered', title: i18next.t('dateDiscovered') || 'Date Discovered' },
+            { data: 'cve_desc', title: i18next.t('description') || 'Description', visible: false }
         ],
         afterLoad: () => {
             // Отображаем панели CVE
@@ -80,12 +80,12 @@ const routeMap = [
         ],
         dataUrl: (match) => `/projects/${match[1]}/assembly/${match[2]}/package/${match[3]}/vulnerabilities`,
         tableColumns: [
-            { data: 'cve_name', title: 'CVE Name' },
-            { data: 'st_name', title: 'Status' },
-            { data: 'urg_name', title: 'Urgency' },
-            { data: 'severity_level', title: 'Severity Level' },
-            { data: 'date_discovered', title: 'Date Discovered' },
-            { data: 'cve_desc', title: 'Description', visible: false }
+            { data: 'cve_name', title: i18next.t('CVEName') || 'CVE Name' },
+            { data: 'st_name', title: i18next.t('status') || 'Status' },
+            { data: 'urg_name', title: i18next.t('urgency') || 'Urgency' },
+            { data: 'severity_level', title: i18next.t('severityLevel') || 'Severity Level' },
+            { data: 'date_discovered', title: i18next.t('dateDiscovered') || 'Date Discovered' },
+            { data: 'cve_desc', title: i18next.t('description') || 'Description', visible: false }
         ],
         afterLoad: () => {
             // Отображаем панели CVE
@@ -107,12 +107,12 @@ const routeMap = [
         ],
         dataUrl: (match) => `/projects/${match[1]}/assembly/${match[2]}/package/${match[3]}/vulnerabilities`,
         tableColumns: [
-            { data: 'cve_name', title: 'CVE Name' },
-            { data: 'st_name', title: 'Status' },
-            { data: 'urg_name', title: 'Urgency' },
-            { data: 'severity_level', title: 'Severity Level' },
-            { data: 'date_discovered', title: 'Date Discovered' },
-            { data: 'cve_desc', title: 'Description', visible: false }
+            { data: 'cve_name', title: i18next.t('CVEName') || 'CVE Name' },
+            { data: 'st_name', title: i18next.t('status') || 'Status' },
+            { data: 'urg_name', title: i18next.t('urgency') || 'Urgency' },
+            { data: 'severity_level', title: i18next.t('severityLevel') || 'Severity Level' },
+            { data: 'date_discovered', title: i18next.t('dateDiscovered') || 'Date Discovered' },
+            { data: 'cve_desc', title: i18next.t('description') || 'Description', visible: false }
         ],
         afterLoad: () => {
             // Отображаем панели CVE
@@ -123,7 +123,33 @@ const routeMap = [
             // Инициализируем панель фильтров
             initializeFilterPanel();
         }
+    },
+    {
+        pattern: /^projects\/(\d+)\/assembly\/(\d+)\/compare\/(\d+)$/,
+        updateLinks: (match) => [`#projects`, `#projects/${match[1]}/assembly`, `#projects/${match[1]}/assembly/${match[2]}/compare/${match[3]}`],
+        dataUrl: (match) => `/projects/${match[1]}/assembly/${match[2]}/compare/${match[3]}`,
+        tableColumns: [
+            { data: 'pkg_name', title: 'Название пакета' },
+            { data: 'state', title: 'Состояние', render: function(data, type, row) {
+                    const mapping = {1: 'Добавлен', 2: 'Удален', 3: 'Повышен', 4: 'Понижен', 5: 'Неизменен'};
+                    return mapping[data] || data;
+                }},
+            { data: 'previous_assm', title: 'Сборка (пред.)' },
+            { data: 'previous_desc', title: 'Описание (пред.)' },
+            { data: 'previous_version', title: 'Версия (пред.)' },
+            { data: 'previous_time', title: 'Время (пред.)' },
+            { data: 'current_assm', title: 'Сборка (тек.)' },
+            { data: 'current_desc', title: 'Описание (тек.)' },
+            { data: 'current_version', title: 'Версия (тек.)' },
+            { data: 'current_time', title: 'Время (тек.)' }
+        ],
+        afterLoad: function() {
+            document.getElementById('compare-panels').style.display = 'block';
+            // Инициализация панели фильтров
+            initializeCompareFilterPanel();
+        }
     }
+
 ];
 
 let currentCVEData = {
@@ -178,6 +204,7 @@ const contextData = {
 var table;
 var vulnerabilitiesButton;
 var nextLevelButton;
+var compareButton;
 
 document.addEventListener('DOMContentLoaded', function () {
     const authButton = document.getElementById('auth-button');
@@ -193,6 +220,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Скрываем панели CVE по умолчанию
         document.getElementById('cve-panels').style.display = 'none';
+        // Скрываем панели Compare по умолчанию
+        document.getElementById('compare-panels').style.display = 'none';
         // clearDataPanel();
 
         const isCVEPage = hash.startsWith('cve');
@@ -389,9 +418,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
 
                     // Если есть фильтры, добавляем их
-                    const filters = getCVEFilters();
-                    if (filters) {
-                        fullUrl += `&${filters}`;
+                    if (window.location.hash.includes('/compare/')) {
+                        const compareFilters = getCompareFilters();
+                        if (compareFilters) {
+                            fullUrl += `&${compareFilters}`;
+                        }
+                    } else {
+                        const filters = getCVEFilters();
+                        if (filters) {
+                            fullUrl += `&${filters}`;
+                        }
                     }
 
                     const isPackagePage = parts[0] === 'projects' && parts.length === 5 && parts[4] === 'package';
@@ -457,7 +493,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 buttons: [
                     {
                         extend: 'collection',
-                        text: '<i class="fas fa-download"></i> Export',
+                        text: '<i class="fas fa-download"></i> ' + i18next.t('exportCurrentPageToCSV'),
                         autoClose: true,
                         // buttons: [
                         //     {
@@ -636,7 +672,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         buttons: [
                             // Экспорт текущей страницы в CSV
                             {
-                                text: 'Export Current Page to CSV',
+                                text: i18next.t('exportCurrentPageToCSV'),
                                 action: function (e, dt, button, config) {
                                     const visibleColumns = dt.columns(':visible').indexes().toArray();
                                     const headers = visibleColumns.map(index => dt.column(index).header().innerText);
@@ -650,14 +686,14 @@ document.addEventListener('DOMContentLoaded', function () {
                             },
                             // Экспорт всех данных в CSV
                             {
-                                text: 'Export All Data to CSV',
+                                text: i18next.t('exportAllDataToCSV'),
                                 action: function (e, dt, button, config) {
                                     exportAllData('csv', 'all_data.csv');
                                 }
                             },
                             // Экспорт текущей страницы в Excel
                             {
-                                text: 'Export Current Page to Excel',
+                                text: i18next.t('exportCurrentPageToExcel'),
                                 action: function (e, dt, button, config) {
                                     const visibleColumns = dt.columns(':visible').indexes().toArray();
                                     const headers = visibleColumns.map(index => dt.column(index).header().innerText);
@@ -677,14 +713,14 @@ document.addEventListener('DOMContentLoaded', function () {
                             },
                             // Экспорт всех данных в Excel
                             {
-                                text: 'Export All Data to Excel',
+                                text: i18next.t('exportAllDataToExcel'),
                                 action: function (e, dt, button, config) {
                                     exportAllData('excel', 'all_data.xlsx');
                                 }
                             },
                             // Экспорт текущей страницы в PDF
                             {
-                                text: 'Export Current Page to PDF',
+                                text: i18next.t('exportCurrentPageToPDF'),
                                 action: function (e, dt, button, config) {
                                     const visibleColumns = dt.columns(':visible').indexes().toArray();
                                     const headers = visibleColumns.map(index => dt.column(index).header().innerText);
@@ -702,14 +738,14 @@ document.addEventListener('DOMContentLoaded', function () {
                             },
                             // Экспорт всех данных в PDF
                             {
-                                text: 'Export All Data to PDF',
+                                text: i18next.t('exportAllDataToPDF'),
                                 action: function (e, dt, button, config) {
                                     exportAllData('pdf', 'all_data.pdf');
                                 }
                             },
                             // Печать текущей страницы
                             {
-                                text: 'Print Current Page',
+                                text: i18next.t('printCurrentPage'),
                                 action: function (e, dt, button, config) {
                                     const data = dt.rows({ page: 'current' }).data().toArray();
                                     printData(data);
@@ -717,7 +753,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             },
                             // Печать всех данных
                             {
-                                text: 'Print All Data',
+                                text: i18next.t('printAllData'),
                                 action: function (e, dt, button, config) {
                                     exportAllData('print');
                                 }
@@ -725,7 +761,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         ]
                     },
                     {
-                        text: '<i class="fas fa-sync-alt"></i> Reload',
+                        text: '<i class="fas fa-sync-alt"></i> ' + i18next.t('reload'),
                         action: function (e, dt, node, config) {
                             dt.ajax.reload(null, false); // Перезагружает данные таблицы без сброса пагинации
                         }
@@ -735,7 +771,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         action: function (e, dt, node, config) {
                             const selectedRowData = dt.row('.selected').data();
                             if (!selectedRowData) {
-                                alert('Пожалуйста, выберите строку для перехода.');
+                                alert(i18next.t('pleaseSelectARow'));
                                 return;
                             }
                             navigateToNextLevel(selectedRowData);
@@ -748,13 +784,13 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                     },
                     {
-                        text: 'Vulnerabilities',
+                        text: i18next.t('vulnerabilities'),
                         name: 'Vulnerabilities',
                         className: 'btn-vulnerabilities',
                         action: function (e, dt, node, config) {
                             const selectedRowData = dt.row({ selected: true }).data();
                             if (!selectedRowData) {
-                                alert('Please select a package to view vulnerabilities.');
+                                alert(i18next.t('pleaseSelectAPackage'));
                                 return;
                             }
                             const projectId = window.location.hash.split('/')[1];
@@ -766,7 +802,43 @@ document.addEventListener('DOMContentLoaded', function () {
                         },
                         enabled: false
                     },
+                    {
+                        text: i18next.t('compare'),
+                        name: 'Compare',
+                        className: 'btn-compare',
+                        action: function (e, dt, node, config) {
+                            const selectedRowData = dt.row({ selected: true }).data();
+                            if (!selectedRowData) {
+                                alert(i18next.t('pleaseSelectARow'));
+                                return;
+                            }
+                            document.getElementById('compareModal').style.display = 'block';
+                            populatePreviousAssemblies(selectedRowData.assm_id);
+                        },
+                        enabled: false
+                    }
+
                 ],
+                language: {
+                    "decimal":        "",
+                    "emptyTable":     i18next.t('emptyTable') || "No data available in table",
+                    "info":           i18next.t('info') || "Showing _START_ to _END_ of _TOTAL_ entries",
+                    "infoEmpty":      i18next.t('infoEmpty') || "Showing 0 to 0 of 0 entries",
+                    "infoFiltered":   i18next.t('infoFiltered') || "(filtered from _MAX_ total entries)",
+                    "infoPostFix":    "",
+                    "thousands":      ",",
+                    "lengthMenu":     i18next.t('lengthMenu') || "Show _MENU_ entries",
+                    "loadingRecords": i18next.t('loadingRecords') || "Loading...",
+                    "processing":     i18next.t('processing') || "Processing...",
+                    "search":         "",
+                    "zeroRecords":    i18next.t('zeroRecords') || "No matching records found",
+                    "paginate": {
+                        "first":      i18next.t('paginate.first') || "First",
+                        "last":       i18next.t('paginate.last') || "Last",
+                        "next":       i18next.t('paginate.next') || "Next",
+                        "previous":   i18next.t('paginate.previous') || "Previous"
+                    }
+                },
             });
 
             var table = $('#data-table').DataTable();
@@ -774,6 +846,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Получаем кнопки
             vulnerabilitiesButton = table.button('Vulnerabilities:name');
             nextLevelButton = table.button('NextLevel:name');
+            compareButton = table.button('Compare:name');
 
             // Проверяем, что кнопки существуют перед их использованием
             if (vulnerabilitiesButton) {
@@ -782,6 +855,15 @@ document.addEventListener('DOMContentLoaded', function () {
                     vulnerabilitiesButton.node().css('display', 'inline-block');
                 } else {
                     vulnerabilitiesButton.node().css('display', 'none');
+                }
+            }
+
+            if (compareButton) {
+                // Обновляем видимость кнопки "Compare"
+                if (parts[0] === 'projects' && parts.length === 3 && parts[2] === 'assembly') {
+                    compareButton.node().css('display', 'inline-block');
+                } else {
+                    compareButton.node().css('display', 'none');
                 }
             }
 
@@ -800,6 +882,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Изначально деактивируем кнопки
             if (vulnerabilitiesButton) vulnerabilitiesButton.disable();
             if (nextLevelButton) nextLevelButton.disable();
+            if (compareButton) compareButton.disable();
 
             // Обработчик для активации/деактивации кнопок при выборе/снятии выделения строки
             table.on('select deselect', function () {
@@ -808,9 +891,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (selectedRows > 0) {
                     if (vulnerabilitiesButton) vulnerabilitiesButton.enable();
                     if (nextLevelButton) nextLevelButton.enable();
+                    if (compareButton) compareButton.enable();
                 } else {
                     if (vulnerabilitiesButton) vulnerabilitiesButton.disable();
                     if (nextLevelButton) nextLevelButton.disable();
+                    if (compareButton) compareButton.disable();
                 }
             });
 
@@ -965,15 +1050,15 @@ document.addEventListener('DOMContentLoaded', function () {
         const authArea = document.getElementById('auth-area');
         if (currentUser && currentUser.username) {
             authArea.innerHTML = `
-        <span style="margin-right:10px;">Привет, ${currentUser.username}</span>
-        <button class="btn btn-secondary" id="logout-button">Выход</button>
-      `;
+                <span style="margin-right:10px;">${i18next.t('greeting', {username: currentUser.username})}</span>
+                <button class="btn btn-secondary" id="logout-button">${i18next.t('logout')}</button>
+            `;
             document.getElementById('logout-button').addEventListener('click', function() {
                 localStorage.removeItem('currentUser');
                 updateAuthArea();
             });
         } else {
-            authArea.innerHTML = `<button class="btn btn-secondary" id="auth-button">Вход/Регистрация</button>`;
+            authArea.innerHTML = `<button class="btn btn-secondary" id="auth-button" data-i18n="loginRegister">${i18next.t('loginRegister')}</button>`;
             document.getElementById('auth-button').addEventListener('click', function() {
                 authModal.style.display = 'block';
             });
@@ -1182,9 +1267,32 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(err => console.error(err));
     });
 
-    document.getElementById('filter-toggle-button').addEventListener('click', function() {
+    //Обработка выбора сборки для сравнения в модальном окне
+    document.getElementById('compare-confirm-button').addEventListener('click', function() {
+        const previousAssmId = document.getElementById('previous-assembly-select').value;
+        const table = $('#data-table').DataTable();
+        const selectedRow = table.row({ selected: true }).data();
+        const parts = window.location.hash.substr(1).split('/');
+        const projectId = parts[1];
+        if (!previousAssmId) {
+            alert(i18next.t('pleaseSelectAssembly'));
+            return;
+        }
+        // Формируем новый URL: #projects/{project_id}/assembly/{currentAssmId}/compare/{previousAssmId}
+        const newHash = `#projects/${projectId}/assembly/${selectedRow.assm_id}/compare/${previousAssmId}`;
+        window.location.hash = newHash;
+        document.getElementById('compareModal').style.display = 'none';
+    });
+
+
+    document.getElementById('cve-filter-toggle-button').addEventListener('click', function() {
         document.getElementById('cve-filter-panel').classList.toggle('open');
-        document.getElementById('filter-toggle-button').classList.toggle('filter-toggle-button_open');
+        document.getElementById('cve-filter-toggle-button').classList.toggle('filter-toggle-button_open');
+    });
+
+    document.getElementById('compare-filter-toggle-button').addEventListener('click', function() {
+        document.getElementById('compare-filter-panel').classList.toggle('open');
+        document.getElementById('compare-filter-toggle-button').classList.toggle('filter-toggle-button_open');
     });
 
     document.getElementById('custom-search-button').addEventListener('click', function() {
@@ -1271,6 +1379,39 @@ function getCVEFilters() {
 
     console.log('Filters:', params.toString());
     return params.toString();
+}
+
+function getCompareFilters() {
+    const form = document.getElementById('compare-filters-form');
+    const formData = new FormData(form);
+    const params = new URLSearchParams();
+
+    // Собираем выбранные коды состояний
+    const stateValues = formData.getAll('compare_state_filter');
+    if (stateValues.length) {
+        params.append('compare_state_filter', stateValues.join(','));
+    }
+
+    // Фильтры для совместной сборки:
+    const includeJointCurrent = document.getElementById('include_joint_current');
+    const includeJointPrevious = document.getElementById('include_joint_previous');
+    if (includeJointCurrent) {
+        params.append('include_joint_current', includeJointCurrent.checked ? 'true' : 'false');
+    }
+    if (includeJointPrevious) {
+        params.append('include_joint_previous', includeJointPrevious.checked ? 'true' : 'false');
+    }
+    return params.toString();
+}
+
+
+function initializeCompareFilterPanel() {
+    const compareFilterApply = document.getElementById('compare-filter-apply');
+    if (compareFilterApply) {
+        compareFilterApply.addEventListener('click', function() {
+            $('#data-table').DataTable().ajax.reload();
+        });
+    }
 }
 
 function updateDataPanel(rowData) {
@@ -1621,11 +1762,11 @@ function getNextLevelButtonText() {
 
     if (parts[0] === 'projects') {
         if (parts.length === 1) {
-            return 'Assemblies';
+            return i18next.t('assemblies');
         } else if (parts.length === 3 && parts[2] === 'assembly') {
-            return 'Packages';
+            return i18next.t('packages');
         } else if (parts.length === 5 && parts[4] === 'package') {
-            return 'Changelog';
+            return i18next.t('changelog');
         } else if (parts.length === 7 && parts[4] === 'packages' && parts[6] === 'changelog') {
             return '';
         }
@@ -1682,6 +1823,51 @@ function togglePackageCheckbox() {
         console.error('Element with ID "package-checkbox" not found.');
     }
 }
+
+function populatePreviousAssemblies(currentAssmId) {
+    const modal = document.getElementById('compareModal');
+    const closeButton = document.getElementById('compareModalClose');
+    const parts = window.location.hash.substr(1).split('/');
+    const projectId = parts[1];
+
+    const url = `http://0.0.0.0:8000/projects/${projectId}/assembly/olderThan/${currentAssmId}`;
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            const select = document.getElementById('previous-assembly-select');
+            select.innerHTML = "";
+            if (data && data.length > 0) {
+                data.forEach(function(assembly) {
+                    const option = document.createElement('option');
+                    option.value = assembly.assm_id;
+                    // Преобразуем дату в читаемый формат
+                    const dateObj = new Date(assembly.assm_date_created);
+                    const formattedDate = dateObj.toLocaleString('ru-RU', {
+                        year: 'numeric',
+                        month: 'numeric',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    option.textContent = `${formattedDate} – ${assembly.assm_desc}`;
+                    select.appendChild(option);
+                });
+            } else {
+                const option = document.createElement('option');
+                option.value = "";
+                option.textContent = i18next.t('noAssembliesAvailable') || "Нет доступных сборок";
+                select.appendChild(option);
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка при получении сборок для сравнения:', error);
+        });
+
+    closeButton.onclick = function() {
+        modal.style.display = 'none';
+    };
+}
+
 
 
 function updateServerData(rowId, column, value, resourceType) {

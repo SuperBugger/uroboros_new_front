@@ -223,7 +223,14 @@ table.dataTable {
     color: #e2e8f0;
 }
 
-#filter-toggle-button {
+#cve-filter-toggle-button {
+    position: fixed;
+    top: 100px;
+    right: -15px;
+    transition: right 0.3s ease;
+}
+
+#compare-filter-toggle-button {
     position: fixed;
     top: 100px;
     right: -15px;
@@ -252,6 +259,23 @@ table.dataTable {
 
 .cve-filter-panel.open {
     right: 0; /* Выдвигаем панель на экран */
+}
+
+.compare-filter-panel {
+    position: fixed;
+    right: -320px; /* изначально спрятана */
+    top: 90px;
+    height: auto;
+    width: 300px;
+    background-color: #f7fafc;
+    transition: right 0.3s ease;
+    z-index: 1000;
+    padding: 15px;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.3);
+    font-size: 15px;
+}
+.compare-filter-panel.open {
+    right: 0; /* панель выезжает при наличии класса open */
 }
 
 /*a, .button-accent {*/
@@ -353,6 +377,18 @@ h4, h5, .section-title {
     cursor: pointer;
 }
 
+#compare-filter-apply{
+    background-color: #4a5568;
+    color: #f0f4f8;
+    border: 2px solid #4a5568;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 13px;
+    margin-top: 10px;
+    min-width: 208px;
+    cursor: pointer;
+}
+
 .modal {
     display: none;
     position: fixed;
@@ -427,9 +463,39 @@ h4, h5, .section-title {
 }
 
 .table td, .table th{
-    padding: 0.5rem !important;
+    padding: 0.3rem !important;
 }
 
 .ml-auto{
     margin-left: 0 !important;
+}
+
+.modal {
+    display: none; /* по умолчанию скрыто */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 33%;
+    min-width: 460px;
+    position: relative;
+}
+
+.close-button {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    font-size: 28px;
+    cursor: pointer;
 }

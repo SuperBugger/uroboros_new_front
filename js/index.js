@@ -123,7 +123,32 @@ const routeMap = [
             // Инициализируем панель фильтров
             initializeFilterPanel();
         }
+    },
+    {
+        pattern: /^projects\/(\d+)\/assembly\/(\d+)\/compare\/(\d+)$/,
+        updateLinks: (match) => [`#projects`, `#projects/${match[1]}/assembly`, `#projects/${match[1]}/assembly/${match[2]}/compare/${match[3]}`],
+        dataUrl: (match) => `/projects/${match[1]}/assembly/${match[2]}/compare/${match[3]}`,
+        tableColumns: [
+            { data: 'pkg_name', title: 'Название пакета' },
+            { data: 'state', title: 'Состояние', render: function(data, type, row) {
+                    const mapping = {1: 'Добавлен', 2: 'Удален', 3: 'Повышен', 4: 'Понижен', 5: 'Неизменен'};
+                    return mapping[data] || data;
+                }},
+            { data: 'previous_assm', title: 'Сборка (пред.)' },
+            { data: 'previous_desc', title: 'Описание (пред.)' },
+            { data: 'previous_version', title: 'Версия (пред.)' },
+            { data: 'previous_time', title: 'Время (пред.)' },
+            { data: 'current_assm', title: 'Сборка (тек.)' },
+            { data: 'current_desc', title: 'Описание (тек.)' },
+            { data: 'current_version', title: 'Версия (тек.)' },
+            { data: 'current_time', title: 'Время (тек.)' }
+        ],
+        afterLoad: function() {
+            // Инициализируем панель фильтров для сравнения сборок
+            initializeCompareFilterPanel();
+        }
     }
+
 ];
 
 let currentCVEData = {
@@ -1215,6 +1240,39 @@ function getCVEFilters() {
     console.log('Filters:', params.toString());
     return params.toString();
 }
+
+function initializeCompareFilterPanel() {
+    // Фильтр по состоянию (чекбоксы с именем "compare_state_filter")
+    const stateFilters = document.querySelectorAll('input[name="compare_state_filter"]');
+    stateFilters.forEach(function(input) {
+        input.addEventListener('change', function() {
+            $('#data-table').DataTable().ajax.reload();
+        });
+    });
+
+    // Фильтры для флага "Совместная сборка"
+    const includeJointCurrentInput = document.getElementById('include_joint_current');
+    const includeJointPreviousInput = document.getElementById('include_joint_previous');
+    if (includeJointCurrentInput) {
+        includeJointCurrentInput.addEventListener('change', function() {
+            $('#data-table').DataTable().ajax.reload();
+        });
+    }
+    if (includeJointPreviousInput) {
+        includeJointPreviousInput.addEventListener('change', function() {
+            $('#data-table').DataTable().ajax.reload();
+        });
+    }
+
+    // Кнопка "Применить" в панели фильтров
+    const compareFilterApply = document.getElementById('compare-filter-apply');
+    if (compareFilterApply) {
+        compareFilterApply.addEventListener('click', function() {
+            $('#data-table').DataTable().ajax.reload();
+        });
+    }
+}
+
 
 function updateDataPanel(rowData) {
     if (!rowData) return;
