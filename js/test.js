@@ -134,12 +134,8 @@ const routeMap = [
                     const mapping = {1: 'Добавлен', 2: 'Удален', 3: 'Повышен', 4: 'Понижен', 5: 'Неизменен'};
                     return mapping[data] || data;
                 }},
-            { data: 'previous_assm', title: 'Сборка (пред.)' },
-            { data: 'previous_desc', title: 'Описание (пред.)' },
             { data: 'previous_version', title: 'Версия (пред.)' },
             { data: 'previous_time', title: 'Время (пред.)' },
-            { data: 'current_assm', title: 'Сборка (тек.)' },
-            { data: 'current_desc', title: 'Описание (тек.)' },
             { data: 'current_version', title: 'Версия (тек.)' },
             { data: 'current_time', title: 'Время (тек.)' }
         ],
@@ -205,6 +201,7 @@ var table;
 var vulnerabilitiesButton;
 var nextLevelButton;
 var compareButton;
+var reportButton;
 
 document.addEventListener('DOMContentLoaded', function () {
     const authButton = document.getElementById('auth-button');
@@ -440,6 +437,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         fullUrl += `&include_joint=${includeJoint}`;
                     }
 
+                    showLoadingOverlay();
+
                     fetch(fullUrl)
                         .then(response => response.json())
                         .then(responseData => {
@@ -463,6 +462,9 @@ document.addEventListener('DOMContentLoaded', function () {
                                 recordsFiltered: 0,
                                 data: []
                             });
+                        })
+                        .finally(() => {
+                            hideLoadingOverlay();
                         });
                 },
                 columns: currentRoute.tableColumns.map(column => {
@@ -493,7 +495,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 buttons: [
                     {
                         extend: 'collection',
-                        text: '<i class="fas fa-download"></i> ' + i18next.t('exportCurrentPageToCSV'),
+                        text: '<i class="fas fa-download"></i> ' + i18next.t('exportMainButton'),
                         autoClose: true,
                         // buttons: [
                         //     {
@@ -674,12 +676,18 @@ document.addEventListener('DOMContentLoaded', function () {
                             {
                                 text: i18next.t('exportCurrentPageToCSV'),
                                 action: function (e, dt, button, config) {
+                                    const stateMapping = {1: 'Добавлен', 2: 'Удален', 3: 'Повышен', 4: 'Понижен', 5: 'Неизменен'};
                                     const visibleColumns = dt.columns(':visible').indexes().toArray();
                                     const headers = visibleColumns.map(index => dt.column(index).header().innerText);
                                     const data = dt.rows({ page: 'current' }).indexes().toArray().map(rowIdx => {
-                                        return visibleColumns.map(colIdx => dt.cell(rowIdx, colIdx).data());
+                                        return visibleColumns.map(colIdx => {
+                                            let cellData = dt.cell(rowIdx, colIdx).data();
+                                            if (dt.column(colIdx).header().innerText === 'Состояние') {
+                                                cellData = stateMapping[cellData] || cellData;
+                                            }
+                                            return cellData;
+                                        });
                                     });
-
                                     const csv = Papa.unparse({ fields: headers, data });
                                     downloadFile(csv, 'current_page.csv', 'text/csv;charset=utf-8;');
                                 }
@@ -695,17 +703,21 @@ document.addEventListener('DOMContentLoaded', function () {
                             {
                                 text: i18next.t('exportCurrentPageToExcel'),
                                 action: function (e, dt, button, config) {
+                                    const stateMapping = {1: 'Добавлен', 2: 'Удален', 3: 'Повышен', 4: 'Понижен', 5: 'Неизменен'};
                                     const visibleColumns = dt.columns(':visible').indexes().toArray();
                                     const headers = visibleColumns.map(index => dt.column(index).header().innerText);
                                     const data = dt.rows({ page: 'current' }).indexes().toArray().map(rowIdx => {
                                         const rowData = {};
                                         visibleColumns.forEach((colIdx, i) => {
-                                            rowData[headers[i]] = dt.cell(rowIdx, colIdx).data();
+                                            let cellData = dt.cell(rowIdx, colIdx).data();
+                                            if (dt.column(colIdx).header().innerText === 'Состояние') {
+                                                cellData = stateMapping[cellData] || cellData;
+                                            }
+                                            rowData[headers[i]] = cellData;
                                         });
                                         return rowData;
                                     });
-
-                                    const worksheet = XLSX.utils.json_to_sheet(data);
+                                    const worksheet = XLSX.utils.json_to_sheet(data, { header: headers });
                                     const workbook = XLSX.utils.book_new();
                                     XLSX.utils.book_append_sheet(workbook, worksheet, 'Current Page');
                                     XLSX.writeFile(workbook, 'current_page.xlsx');
@@ -721,19 +733,45 @@ document.addEventListener('DOMContentLoaded', function () {
                             // Экспорт текущей страницы в PDF
                             {
                                 text: i18next.t('exportCurrentPageToPDF'),
-                                action: function (e, dt, button, config) {
-                                    const visibleColumns = dt.columns(':visible').indexes().toArray();
-                                    const headers = visibleColumns.map(index => dt.column(index).header().innerText);
-                                    const data = dt.rows({ page: 'current' }).indexes().toArray().map(rowIdx => {
-                                        return visibleColumns.map(colIdx => dt.cell(rowIdx, colIdx).data());
-                                    });
+                                action: async function (e, dt, button, config) {
+                                    try {
+                                        const response = await fetch('/font/DejaVuSans_base64.txt');
+                                        const dejaVuSansTtfBase64 = await response.text();
 
-                                    const doc = new window.jspdf.jsPDF();
-                                    doc.autoTable({
-                                        head: [headers],
-                                        body: data
-                                    });
-                                    doc.save('current_page.pdf');
+                                        const stateMapping = {
+                                            1: 'Добавлен',
+                                            2: 'Удален',
+                                            3: 'Повышен',
+                                            4: 'Понижен',
+                                            5: 'Неизменен'
+                                        };
+                                        const visibleColumns = dt.columns(':visible').indexes().toArray();
+                                        const headers = visibleColumns.map(index => dt.column(index).header().innerText);
+                                        const data = dt.rows({page: 'current'}).indexes().toArray().map(rowIdx => {
+                                            return visibleColumns.map(colIdx => {
+                                                let cellData = dt.cell(rowIdx, colIdx).data();
+                                                if (dt.column(colIdx).header().innerText === 'Состояние') {
+                                                    cellData = stateMapping[cellData] || cellData;
+                                                }
+                                                return cellData;
+                                            });
+                                        });
+                                        const doc = new window.jspdf.jsPDF('l', 'mm', 'a4');
+                                        doc.addFileToVFS("DejaVuSans.ttf", dejaVuSansTtfBase64);
+                                        doc.addFont("DejaVuSans.ttf", "DejaVuSans", "normal");
+                                        doc.setFont("DejaVuSans");
+                                        doc.setFontSize(10);
+                                        
+                                        doc.autoTable({
+                                            head: [headers],
+                                            body: data,
+                                            styles: {font: "DejaVuSans", fontSize: 10}
+                                        });
+
+                                        doc.save('current_page.pdf');
+                                    } catch (error) {
+                                        console.error("Ошибка загрузки файла шрифта:", error);
+                                    }
                                 }
                             },
                             // Экспорт всех данных в PDF
@@ -747,8 +785,37 @@ document.addEventListener('DOMContentLoaded', function () {
                             {
                                 text: i18next.t('printCurrentPage'),
                                 action: function (e, dt, button, config) {
-                                    const data = dt.rows({ page: 'current' }).data().toArray();
-                                    printData(data);
+                                    const stateMapping = {1: 'Добавлен', 2: 'Удален', 3: 'Повышен', 4: 'Понижен', 5: 'Неизменен'};
+                                    const visibleColumns = dt.columns(':visible').indexes().toArray();
+                                    const headers = visibleColumns.map(index => dt.column(index).header().innerText);
+                                    let html = "<html><head><meta charset='utf-8'><title>Печать текущей страницы</title></head><body>";
+                                    html += `<h1>Comparison for Assemblies</h1>`;
+                                    html += "<table border='1' style='border-collapse: collapse;'>";
+                                    html += "<thead><tr>";
+                                    headers.forEach(function(header) {
+                                        html += `<th style="padding: 5px;">${header}</th>`;
+                                    });
+                                    html += "</tr></thead><tbody>";
+                                    dt.rows({ page: 'current' }).indexes().toArray().forEach(function(rowIdx) {
+                                        html += "<tr>";
+                                        visibleColumns.forEach(function(colIdx) {
+                                            let cellData = dt.cell(rowIdx, colIdx).data();
+                                            if (dt.column(colIdx).header().innerText === 'Состояние') {
+                                                cellData = stateMapping[cellData] || cellData;
+                                            }
+                                            html += `<td style="padding: 5px;">${cellData}</td>`;
+                                        });
+                                        html += "</tr>";
+                                    });
+                                    html += "</tbody></table>";
+                                    html += "</body></html>";
+
+                                    const printWindow = window.open('', '', 'height=600,width=800');
+                                    printWindow.document.write(html);
+                                    printWindow.document.close();
+                                    printWindow.focus();
+                                    printWindow.print();
+                                    printWindow.close();
                                 }
                             },
                             // Печать всех данных
@@ -816,6 +883,65 @@ document.addEventListener('DOMContentLoaded', function () {
                             populatePreviousAssemblies(selectedRowData.assm_id);
                         },
                         enabled: false
+                    },
+                    {
+                        text: i18next.t('report'),
+                        name: 'Report',
+                        className: 'btn-report',
+                        action: function (e, dt, button, config) {
+                            const hash = window.location.hash.substring(1);
+                            const parts = hash.split('/');
+
+                            if (parts.length === 6 && parts[0] === 'projects' && parts[2] === 'assembly' && parts[4] === 'compare') {
+                                const projectId = parts[1];
+                                const currentAssmId = parts[3];
+                                const previousAssmId = parts[5];
+                                const reportEndpoint = `http://0.0.0.0:8000/projects/${projectId}/assembly/${currentAssmId}/compare/${previousAssmId}/report`;
+
+                                showLoadingOverlay();
+
+                                fetch(reportEndpoint)
+                                    .then(response => {
+                                        if (!response.ok) {
+                                            throw new Error(`Ошибка сервера: ${response.statusText}`);
+                                        }
+                                        return response.json();
+                                    })
+                                    .then(data => {
+                                        hideLoadingOverlay();
+                                        const reportText = data.report;
+                                        if (!reportText) {
+                                            alert("Отчёт пуст или произошла ошибка");
+                                            return;
+                                        }
+                                        const reportWindow = window.open('', '_blank');
+                                        reportWindow.document.open();
+                                        reportWindow.document.write(
+                                            `<html>
+                                                <head>
+                                                    <meta charset="utf-8">
+                                                    <title>Отчёт</title>
+                                                    <style>
+                                                        body { font-family: "DejaVu Sans", sans-serif; padding: 20px; }
+                                                        pre { white-space: pre-wrap; word-wrap: break-word; }
+                                                    </style>
+                                                </head>
+                                                <body>
+                                                    <pre>${reportText}</pre>
+                                                </body>
+                                            </html>`
+                                        );
+                                        reportWindow.document.close();
+                                    })
+                                    .catch(error => {
+                                        hideLoadingOverlay();
+                                        console.error("Ошибка при получении отчёта:", error);
+                                        alert("Ошибка при получении отчёта");
+                                    });
+                            } else {
+                                alert("Отчёт доступен только на странице сравнения сборок");
+                            }
+                        }
                     }
 
                 ],
@@ -847,6 +973,7 @@ document.addEventListener('DOMContentLoaded', function () {
             vulnerabilitiesButton = table.button('Vulnerabilities:name');
             nextLevelButton = table.button('NextLevel:name');
             compareButton = table.button('Compare:name');
+            reportButton = table.button('Report:name');
 
             // Проверяем, что кнопки существуют перед их использованием
             if (vulnerabilitiesButton) {
@@ -864,6 +991,15 @@ document.addEventListener('DOMContentLoaded', function () {
                     compareButton.node().css('display', 'inline-block');
                 } else {
                     compareButton.node().css('display', 'none');
+                }
+            }
+
+            if (reportButton) {
+                // Обновляем видимость кнопки "Report"
+                if (parts[0] === 'projects' && parts.length === 6 && parts[4] === 'compare') {
+                    reportButton.node().css('display', 'inline-block');
+                } else {
+                    reportButton.node().css('display', 'none');
                 }
             }
 
@@ -1991,42 +2127,72 @@ function updateServerData(rowId, column, value, resourceType) {
 
 
 async function updateNavigationLinks(links) {
-    const breadcrumbLinks = document.getElementById('breadcrumb-links');
-    if (!breadcrumbLinks) {
-        console.error('breadcrumb-links element not found in DOM');
+    const breadcrumbContainer = document.getElementById('breadcrumb-links');
+    if (!breadcrumbContainer) {
+        console.error('breadcrumb-links element not found');
         return;
     }
 
     const hash = window.location.hash.substring(1);
     const parts = hash.split('/');
 
-    // Асинхронная загрузка всех хлебных крошек
+    // Если это страница сравнения сборок
+    if (/^projects\/\d+\/assembly\/\d+\/compare\/\d+$/.test(hash)) {
+        const standardBreadcrumbs = (await Promise.all(
+            links.slice(0, 2).map(async (link, index) => {
+                let text = 'Home';
+                if (index === 0) {
+                    text = link === '#projects' ? 'Projects' : 'Home';
+                } else if (index === 1) {
+                    const projectId = parts[1];
+                    if (contextData.projectNames[projectId]) {
+                        text = contextData.projectNames[projectId];
+                    } else {
+                        text = await fetchResourceInfo('projects', projectId, 'projectNames', `Project ${projectId}`);
+                    }
+                }
+                return `<a href="${link}" class="mr-2">${text}</a>`;
+            })
+        )).join(' / ');
+
+        const currentAssmId = parts[3];
+        const previousAssmId = parts[5];
+
+        try {
+            const [prevResp, currResp] = await Promise.all([
+                fetch(`http://0.0.0.0:8000/assemblies/${previousAssmId}/info`),
+                fetch(`http://0.0.0.0:8000/assemblies/${currentAssmId}/info`)
+            ]);
+            const prevData = await prevResp.json();
+            const currData = await currResp.json();
+            const prevInfo = prevData.data || "Неизвестно";
+            const currInfo = currData.data || "Неизвестно";
+            const compareString = `${prevInfo} => ${currInfo}`;
+            breadcrumbContainer.innerHTML = standardBreadcrumbs + ' / ' + compareString;
+        } catch (err) {
+            console.error("Ошибка при получении данных для хлебных крошек сравнения сборок:", err);
+            breadcrumbContainer.innerHTML = standardBreadcrumbs;
+        }
+        return;
+    }
+
+    // Для остальных страниц
     const breadcrumbs = await Promise.all(
         links.map(async (link, index) => {
-            let text = 'Home'; // Значение по умолчанию
-
-            if (index === 0) { // Главная страница
-                if (link === '#projects') {
-                    text = 'Projects';
-                } else if (link === '#cve') {
-                    text = 'Vulnerabilities';
-                }
-            } else if (index === 1 && parts.length >= 2) { // Страница сборок
+            let text = 'Home';
+            if (index === 0) {
+                text = (link === '#projects') ? 'Projects' : 'Home';
+            } else if (index === 1 && parts.length >= 2) {
                 const projectId = parts[1];
                 if (contextData.projectNames[projectId]) {
                     text = contextData.projectNames[projectId];
                 } else {
                     text = await fetchResourceInfo('projects', projectId, 'projectNames', `Project ${projectId}`);
                 }
-            } else if (index === 2 && parts.length >= 4) { // Страница пакетов
+            } else if (index === 2 && parts.length >= 4) {
                 const assemblyId = parts[3];
-                // if (contextData.assemblyDates[assemblyId]) {
-                //     text = contextData.assemblyDates[assemblyId];
-                // } else {
-                //     text = await fetchResourceInfo('assemblies', assemblyId, 'assemblyDates', `Assembly ${assemblyId}`);
-                // }
                 text = await fetchResourceInfo('assemblies', assemblyId, 'assemblyDates', `Assembly ${assemblyId}`);
-            } else if (index === 3 && parts.length >= 6) { // Страница changelog
+            } else if (index === 3 && parts.length >= 6) {
                 const packageId = parts[5];
                 if (contextData.packageNames[packageId]) {
                     const packageInfo = contextData.packageNames[packageId];
@@ -2036,13 +2202,25 @@ async function updateNavigationLinks(links) {
                     text = `${data.pkg_name || `Package ${packageId}`}: ${data.version || ''}`;
                 }
             }
-
             return `<a href="${link}" class="mr-2">${text}</a>`;
         })
     );
-
     localStorage.setItem('breadcrumbs', JSON.stringify(breadcrumbs));
-    breadcrumbLinks.innerHTML = breadcrumbs.join(' / ');
+    breadcrumbContainer.innerHTML = breadcrumbs.join(' / ');
+}
+
+function showLoadingOverlay() {
+    const overlay = document.getElementById('loading-overlay');
+    if (overlay) {
+        overlay.style.display = 'flex';
+    }
+}
+
+function hideLoadingOverlay() {
+    const overlay = document.getElementById('loading-overlay');
+    if (overlay) {
+        overlay.style.display = 'none';
+    }
 }
 
 // Вспомогательная функция для запроса к серверу
@@ -2163,6 +2341,8 @@ function exportAllData(format, filename) {
         apiUrl += '/projects';
     } else if (parts[0] === 'projects' && parts.length === 3 && parts[2] === 'assembly') {
         apiUrl += `/projects/${parts[1]}/assembly`;
+    } else if (parts[0] === 'projects' && parts.length === 6 && parts[4] === 'compare') {
+        apiUrl += `/projects/${parts[1]}/assembly/${parts[3]}/compare/${parts[5]}`;
     } else if (parts[0] === 'projects' && parts.length === 5 && parts[4] === 'package') {
         apiUrl += `/projects/${parts[1]}/assembly/${parts[3]}/package`;
     } else if (parts[0] === 'projects' && parts.length === 7 && parts[4] === 'packages' && parts[6] === 'changelog') {

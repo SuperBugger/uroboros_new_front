@@ -5,6 +5,7 @@
   "loginRegister": "Login/Register",
   "greeting": "Hello, {{username}}",
   "logout": "Logout",
+  "exportMainButton": "Export",
   "exportCurrentPageToCSV": "Export Current Page to CSV",
   "exportAllDataToCSV": "Export All Data to CSV",
   "exportCurrentPageToExcel": "Export Current Page to Excel",
@@ -91,5 +92,6 @@
   "state": "State",
   "jointAssembly": "Joint assembly",
   "selectPreviousAssembly": "Select previous assembly",
-  "noAssembliesAvailable": "No assemblies available"
+  "noAssembliesAvailable": "No assemblies available",
+  "report": "Report"
 }

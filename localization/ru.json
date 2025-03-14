@@ -5,6 +5,7 @@
   "loginRegister": "Вход/Регистрация",
   "greeting": "Привет, {{username}}",
   "logout": "Выход",
+  "exportMainButton": "Экспорт",
   "exportCurrentPageToCSV": "Экспорт текущей страницы в CSV",
   "exportAllDataToCSV": "Экспорт всех данных в CSV",
   "exportCurrentPageToExcel": "Экспорт текущей страницы в Excel",
@@ -91,5 +92,6 @@
   "state": "Состояние",
   "jointAssembly": "Совместная сборка",
   "selectPreviousAssembly": "Выберите предыдущую сборку",
-  "noAssembliesAvailable": "Нет доступных сборок"
+  "noAssembliesAvailable": "Нет доступных сборок",
+  "report": "Отчёт"
 }
