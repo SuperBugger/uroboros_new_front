@@ -5,10 +5,10 @@ const routeMap = [
         dataUrl: () => '/projects',
         tableColumns: [
             { data: 'prj_id', title: 'ID' },
-            { data: 'prj_name', title: 'Project Name', className: 'project-name' },
-            { data: 'prj_desc', title: 'Description', className: 'editable' },
-            { data: 'vendor', title: 'Vendor' },
-            { data: 'arch_name', title: 'Architecture' }
+            { data: 'prj_name', title: i18next.t('projectName') || 'Project Name', className: 'project-name' },
+            { data: 'prj_desc', title: i18next.t('description') || 'Description', className: 'editable' },
+            { data: 'vendor', title: i18next.t('vendor') || 'Vendor' },
+            { data: 'arch_name', title: i18next.t('architecture') || 'Architecture' }
         ]
     },
     {
@@ -16,10 +16,10 @@ const routeMap = [
         updateLinks: (match) => [`#projects`, `#projects/${match[1]}/assembly`],
         dataUrl: (match) => `/projects/${match[1]}/assembly`,
         tableColumns: [
-            { data: 'assm_id', title: 'Assembly ID' },
-            { data: 'assm_date_created', title: 'Date Created', className: 'assm-date' },
-            { data: 'assm_desc', title: 'Description', className: 'editable' },
-            { data: 'assm_version', title: 'Version' }
+            { data: 'assm_id', title: i18next.t('assemblyID') || 'Assembly ID' },
+            { data: 'assm_date_created', title: i18next.t('dateCreated') || 'Date Created', className: 'assm-date' },
+            { data: 'assm_desc', title: i18next.t('description') || 'Description', className: 'editable' },
+            { data: 'assm_version', title: i18next.t('version') || 'Version' }
         ]
     },
     {
@@ -27,11 +27,11 @@ const routeMap = [
         updateLinks: (match) => [`#projects`, `#projects/${match[1]}/assembly`, `#projects/${match[1]}/assembly/${match[2]}/package`],
         dataUrl: (match) => `/projects/${match[1]}/assembly/${match[2]}/package`,
         tableColumns: [
-            { data: 'pkg_name', title: 'Package Name', className: 'package-name' },
-            { data: 'pkg_vrs_id', title: 'Package Version ID' },
-            { data: 'version', title: 'Version' },
-            { data: 'author_name', title: 'Author' },
-            { data: 'pkg_date_created', title: 'Date Created' }
+            { data: 'pkg_name', title: i18next.t('packageName') || 'Package Name', className: 'package-name' },
+            { data: 'pkg_vrs_id', title: i18next.t('packageVersionID') || 'Package Version ID' },
+            { data: 'version', title: i18next.t('version') || 'Version' },
+            { data: 'author_name', title: i18next.t('author') || 'Author' },
+            { data: 'pkg_date_created', title: i18next.t('dateCreated') || 'Date Created' }
         ]
     },
     {
@@ -39,10 +39,10 @@ const routeMap = [
         updateLinks: (match) => [`#projects`, `#projects/${match[1]}/assembly`, `#projects/${match[1]}/assembly/${match[2]}/package`, `#projects/${match[1]}/assembly/${match[2]}/packages/${match[3]}/changelog`],
         dataUrl: (match) => `/projects/${match[1]}/assembly/${match[2]}/packages/${match[3]}/changelog`,
         tableColumns: [
-            { data: 'version', title: 'Version' },
-            { data: 'author_name', title: 'Author' },
-            { data: 'date_added', title: 'Date Added' },
-            { data: 'log_desc', title: 'Description' }
+            { data: 'version', title: i18next.t('version') || 'Version' },
+            { data: 'author_name', title: i18next.t('author') || 'Author' },
+            { data: 'date_added', title: i18next.t('dateCreated') || 'Date Added' },
+            { data: 'log_desc', title: i18next.t('description') || 'Description' }
         ]
     },
     {
@@ -50,15 +50,15 @@ const routeMap = [
         updateLinks: () => ['#cve'],
         dataUrl: () => '/cve',
         tableColumns: [
-            { data: 'cve_name', title: 'CVE Name' },
-            { data: 'pkg_name', title: 'Package Name' },
-            { data: 'rep_name', title: 'Repository Name' },
+            { data: 'cve_name', title: i18next.t('CVEName') || 'CVE Name' },
+            { data: 'pkg_name', title: i18next.t('packageName') || 'Package Name' },
+            { data: 'rep_name', title: i18next.t('repositoryName') || 'Repository Name' },
             // { data: 'rep_ver', title: 'Repository Version' },
-            { data: 'st_name', title: 'Status' },
-            { data: 'urg_name', title: 'Urgency' },
-            { data: 'severity_level', title: 'Severity Level' },
-            { data: 'date_discovered', title: 'Date Discovered' },
-            { data: 'cve_desc', title: 'Description', visible: false }
+            { data: 'st_name', title: i18next.t('status') || 'Status' },
+            { data: 'urg_name', title: i18next.t('urgency') || 'Urgency' },
+            { data: 'severity_level', title: i18next.t('severityLevel') || 'Severity Level' },
+            { data: 'date_discovered', title: i18next.t('dateDiscovered') || 'Date Discovered' },
+            { data: 'cve_desc', title: i18next.t('description') || 'Description', visible: false }
         ],
         afterLoad: () => {
             // Отображаем панели CVE
@@ -80,12 +80,12 @@ const routeMap = [
         ],
         dataUrl: (match) => `/projects/${match[1]}/assembly/${match[2]}/package/${match[3]}/vulnerabilities`,
         tableColumns: [
-            { data: 'cve_name', title: 'CVE Name' },
-            { data: 'st_name', title: 'Status' },
-            { data: 'urg_name', title: 'Urgency' },
-            { data: 'severity_level', title: 'Severity Level' },
-            { data: 'date_discovered', title: 'Date Discovered' },
-            { data: 'cve_desc', title: 'Description', visible: false }
+            { data: 'cve_name', title: i18next.t('CVEName') || 'CVE Name' },
+            { data: 'st_name', title: i18next.t('status') || 'Status' },
+            { data: 'urg_name', title: i18next.t('urgency') || 'Urgency' },
+            { data: 'severity_level', title: i18next.t('severityLevel') || 'Severity Level' },
+            { data: 'date_discovered', title: i18next.t('dateDiscovered') || 'Date Discovered' },
+            { data: 'cve_desc', title: i18next.t('description') || 'Description', visible: false }
         ],
         afterLoad: () => {
             // Отображаем панели CVE
@@ -107,12 +107,12 @@ const routeMap = [
         ],
         dataUrl: (match) => `/projects/${match[1]}/assembly/${match[2]}/package/${match[3]}/vulnerabilities`,
         tableColumns: [
-            { data: 'cve_name', title: 'CVE Name' },
-            { data: 'st_name', title: 'Status' },
-            { data: 'urg_name', title: 'Urgency' },
-            { data: 'severity_level', title: 'Severity Level' },
-            { data: 'date_discovered', title: 'Date Discovered' },
-            { data: 'cve_desc', title: 'Description', visible: false }
+            { data: 'cve_name', title: i18next.t('CVEName') || 'CVE Name' },
+            { data: 'st_name', title: i18next.t('status') || 'Status' },
+            { data: 'urg_name', title: i18next.t('urgency') || 'Urgency' },
+            { data: 'severity_level', title: i18next.t('severityLevel') || 'Severity Level' },
+            { data: 'date_discovered', title: i18next.t('dateDiscovered') || 'Date Discovered' },
+            { data: 'cve_desc', title: i18next.t('description') || 'Description', visible: false }
         ],
         afterLoad: () => {
             // Отображаем панели CVE
@@ -134,17 +134,14 @@ const routeMap = [
                     const mapping = {1: 'Добавлен', 2: 'Удален', 3: 'Повышен', 4: 'Понижен', 5: 'Неизменен'};
                     return mapping[data] || data;
                 }},
-            { data: 'previous_assm', title: 'Сборка (пред.)' },
-            { data: 'previous_desc', title: 'Описание (пред.)' },
             { data: 'previous_version', title: 'Версия (пред.)' },
             { data: 'previous_time', title: 'Время (пред.)' },
-            { data: 'current_assm', title: 'Сборка (тек.)' },
-            { data: 'current_desc', title: 'Описание (тек.)' },
             { data: 'current_version', title: 'Версия (тек.)' },
             { data: 'current_time', title: 'Время (тек.)' }
         ],
         afterLoad: function() {
-            // Инициализируем панель фильтров для сравнения сборок
+            document.getElementById('compare-panels').style.display = 'block';
+            // Инициализация панели фильтров
             initializeCompareFilterPanel();
         }
     }
@@ -203,14 +200,25 @@ const contextData = {
 var table;
 var vulnerabilitiesButton;
 var nextLevelButton;
+var compareButton;
+var reportButton;
 
 document.addEventListener('DOMContentLoaded', function () {
+    const authButton = document.getElementById('auth-button');
+    const authModal = document.getElementById('auth-modal');
+    const authModalClose = document.getElementById('auth-modal-close');
+    const loginTab = document.getElementById('login-tab');
+    const registerTab = document.getElementById('register-tab');
+    const loginFormContainer = document.getElementById('login-form-container');
+    const registerFormContainer = document.getElementById('register-form-container');
 
     function updateContent() {
         const hash = window.location.hash.substring(1) || 'projects';
 
         // Скрываем панели CVE по умолчанию
         document.getElementById('cve-panels').style.display = 'none';
+        // Скрываем панели Compare по умолчанию
+        document.getElementById('compare-panels').style.display = 'none';
         // clearDataPanel();
 
         const isCVEPage = hash.startsWith('cve');
@@ -223,7 +231,8 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 updateDataPanel(selectedRow);
             }
-        } else {
+        }
+        else {
             clearDataPanel();
             resetCurrentCVEData();
         }
@@ -406,9 +415,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
 
                     // Если есть фильтры, добавляем их
-                    const filters = getCVEFilters();
-                    if (filters) {
-                        fullUrl += `&${filters}`;
+                    if (window.location.hash.includes('/compare/')) {
+                        const compareFilters = getCompareFilters();
+                        if (compareFilters) {
+                            fullUrl += `&${compareFilters}`;
+                        }
+                    } else {
+                        const filters = getCVEFilters();
+                        if (filters) {
+                            fullUrl += `&${filters}`;
+                        }
                     }
 
                     const isPackagePage = parts[0] === 'projects' && parts.length === 5 && parts[4] === 'package';
@@ -420,6 +436,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                         fullUrl += `&include_joint=${includeJoint}`;
                     }
+
+                    showLoadingOverlay();
 
                     fetch(fullUrl)
                         .then(response => response.json())
@@ -444,6 +462,9 @@ document.addEventListener('DOMContentLoaded', function () {
                                 recordsFiltered: 0,
                                 data: []
                             });
+                        })
+                        .finally(() => {
+                            hideLoadingOverlay();
                         });
                 },
                 columns: currentRoute.tableColumns.map(column => {
@@ -474,7 +495,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 buttons: [
                     {
                         extend: 'collection',
-                        text: '<i class="fas fa-download"></i> Export',
+                        text: '<i class="fas fa-download"></i> ' + i18next.t('exportMainButton'),
                         autoClose: true,
                         // buttons: [
                         //     {
@@ -653,40 +674,50 @@ document.addEventListener('DOMContentLoaded', function () {
                         buttons: [
                             // Экспорт текущей страницы в CSV
                             {
-                                text: 'Export Current Page to CSV',
+                                text: i18next.t('exportCurrentPageToCSV'),
                                 action: function (e, dt, button, config) {
+                                    const stateMapping = {1: 'Добавлен', 2: 'Удален', 3: 'Повышен', 4: 'Понижен', 5: 'Неизменен'};
                                     const visibleColumns = dt.columns(':visible').indexes().toArray();
                                     const headers = visibleColumns.map(index => dt.column(index).header().innerText);
                                     const data = dt.rows({ page: 'current' }).indexes().toArray().map(rowIdx => {
-                                        return visibleColumns.map(colIdx => dt.cell(rowIdx, colIdx).data());
+                                        return visibleColumns.map(colIdx => {
+                                            let cellData = dt.cell(rowIdx, colIdx).data();
+                                            if (dt.column(colIdx).header().innerText === 'Состояние') {
+                                                cellData = stateMapping[cellData] || cellData;
+                                            }
+                                            return cellData;
+                                        });
                                     });
-
                                     const csv = Papa.unparse({ fields: headers, data });
                                     downloadFile(csv, 'current_page.csv', 'text/csv;charset=utf-8;');
                                 }
                             },
                             // Экспорт всех данных в CSV
                             {
-                                text: 'Export All Data to CSV',
+                                text: i18next.t('exportAllDataToCSV'),
                                 action: function (e, dt, button, config) {
                                     exportAllData('csv', 'all_data.csv');
                                 }
                             },
                             // Экспорт текущей страницы в Excel
                             {
-                                text: 'Export Current Page to Excel',
+                                text: i18next.t('exportCurrentPageToExcel'),
                                 action: function (e, dt, button, config) {
+                                    const stateMapping = {1: 'Добавлен', 2: 'Удален', 3: 'Повышен', 4: 'Понижен', 5: 'Неизменен'};
                                     const visibleColumns = dt.columns(':visible').indexes().toArray();
                                     const headers = visibleColumns.map(index => dt.column(index).header().innerText);
                                     const data = dt.rows({ page: 'current' }).indexes().toArray().map(rowIdx => {
                                         const rowData = {};
                                         visibleColumns.forEach((colIdx, i) => {
-                                            rowData[headers[i]] = dt.cell(rowIdx, colIdx).data();
+                                            let cellData = dt.cell(rowIdx, colIdx).data();
+                                            if (dt.column(colIdx).header().innerText === 'Состояние') {
+                                                cellData = stateMapping[cellData] || cellData;
+                                            }
+                                            rowData[headers[i]] = cellData;
                                         });
                                         return rowData;
                                     });
-
-                                    const worksheet = XLSX.utils.json_to_sheet(data);
+                                    const worksheet = XLSX.utils.json_to_sheet(data, { header: headers });
                                     const workbook = XLSX.utils.book_new();
                                     XLSX.utils.book_append_sheet(workbook, worksheet, 'Current Page');
                                     XLSX.writeFile(workbook, 'current_page.xlsx');
@@ -694,47 +725,102 @@ document.addEventListener('DOMContentLoaded', function () {
                             },
                             // Экспорт всех данных в Excel
                             {
-                                text: 'Export All Data to Excel',
+                                text: i18next.t('exportAllDataToExcel'),
                                 action: function (e, dt, button, config) {
                                     exportAllData('excel', 'all_data.xlsx');
                                 }
                             },
                             // Экспорт текущей страницы в PDF
                             {
-                                text: 'Export Current Page to PDF',
-                                action: function (e, dt, button, config) {
-                                    const visibleColumns = dt.columns(':visible').indexes().toArray();
-                                    const headers = visibleColumns.map(index => dt.column(index).header().innerText);
-                                    const data = dt.rows({ page: 'current' }).indexes().toArray().map(rowIdx => {
-                                        return visibleColumns.map(colIdx => dt.cell(rowIdx, colIdx).data());
-                                    });
+                                text: i18next.t('exportCurrentPageToPDF'),
+                                action: async function (e, dt, button, config) {
+                                    try {
+                                        const response = await fetch('/font/DejaVuSans_base64.txt');
+                                        const dejaVuSansTtfBase64 = await response.text();
 
-                                    const doc = new window.jspdf.jsPDF();
-                                    doc.autoTable({
-                                        head: [headers],
-                                        body: data
-                                    });
-                                    doc.save('current_page.pdf');
+                                        const stateMapping = {
+                                            1: 'Добавлен',
+                                            2: 'Удален',
+                                            3: 'Повышен',
+                                            4: 'Понижен',
+                                            5: 'Неизменен'
+                                        };
+                                        const visibleColumns = dt.columns(':visible').indexes().toArray();
+                                        const headers = visibleColumns.map(index => dt.column(index).header().innerText);
+                                        const data = dt.rows({page: 'current'}).indexes().toArray().map(rowIdx => {
+                                            return visibleColumns.map(colIdx => {
+                                                let cellData = dt.cell(rowIdx, colIdx).data();
+                                                if (dt.column(colIdx).header().innerText === 'Состояние') {
+                                                    cellData = stateMapping[cellData] || cellData;
+                                                }
+                                                return cellData;
+                                            });
+                                        });
+                                        const doc = new window.jspdf.jsPDF('l', 'mm', 'a4');
+                                        doc.addFileToVFS("DejaVuSans.ttf", dejaVuSansTtfBase64);
+                                        doc.addFont("DejaVuSans.ttf", "DejaVuSans", "normal");
+                                        doc.setFont("DejaVuSans");
+                                        doc.setFontSize(10);
+
+                                        doc.autoTable({
+                                            head: [headers],
+                                            body: data,
+                                            styles: {font: "DejaVuSans", fontSize: 10}
+                                        });
+
+                                        doc.save('current_page.pdf');
+                                    } catch (error) {
+                                        console.error("Ошибка загрузки файла шрифта:", error);
+                                    }
                                 }
                             },
                             // Экспорт всех данных в PDF
                             {
-                                text: 'Export All Data to PDF',
+                                text: i18next.t('exportAllDataToPDF'),
                                 action: function (e, dt, button, config) {
                                     exportAllData('pdf', 'all_data.pdf');
                                 }
                             },
                             // Печать текущей страницы
                             {
-                                text: 'Print Current Page',
+                                text: i18next.t('printCurrentPage'),
                                 action: function (e, dt, button, config) {
-                                    const data = dt.rows({ page: 'current' }).data().toArray();
-                                    printData(data);
+                                    const stateMapping = {1: 'Добавлен', 2: 'Удален', 3: 'Повышен', 4: 'Понижен', 5: 'Неизменен'};
+                                    const visibleColumns = dt.columns(':visible').indexes().toArray();
+                                    const headers = visibleColumns.map(index => dt.column(index).header().innerText);
+                                    let html = "<html><head><meta charset='utf-8'><title>Печать текущей страницы</title></head><body>";
+                                    html += `<h1>Comparison for Assemblies</h1>`;
+                                    html += "<table border='1' style='border-collapse: collapse;'>";
+                                    html += "<thead><tr>";
+                                    headers.forEach(function(header) {
+                                        html += `<th style="padding: 5px;">${header}</th>`;
+                                    });
+                                    html += "</tr></thead><tbody>";
+                                    dt.rows({ page: 'current' }).indexes().toArray().forEach(function(rowIdx) {
+                                        html += "<tr>";
+                                        visibleColumns.forEach(function(colIdx) {
+                                            let cellData = dt.cell(rowIdx, colIdx).data();
+                                            if (dt.column(colIdx).header().innerText === 'Состояние') {
+                                                cellData = stateMapping[cellData] || cellData;
+                                            }
+                                            html += `<td style="padding: 5px;">${cellData}</td>`;
+                                        });
+                                        html += "</tr>";
+                                    });
+                                    html += "</tbody></table>";
+                                    html += "</body></html>";
+
+                                    const printWindow = window.open('', '', 'height=600,width=800');
+                                    printWindow.document.write(html);
+                                    printWindow.document.close();
+                                    printWindow.focus();
+                                    printWindow.print();
+                                    printWindow.close();
                                 }
                             },
                             // Печать всех данных
                             {
-                                text: 'Print All Data',
+                                text: i18next.t('printAllData'),
                                 action: function (e, dt, button, config) {
                                     exportAllData('print');
                                 }
@@ -742,7 +828,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         ]
                     },
                     {
-                        text: '<i class="fas fa-sync-alt"></i> Reload',
+                        text: '<i class="fas fa-sync-alt"></i> ' + i18next.t('reload'),
                         action: function (e, dt, node, config) {
                             dt.ajax.reload(null, false); // Перезагружает данные таблицы без сброса пагинации
                         }
@@ -752,7 +838,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         action: function (e, dt, node, config) {
                             const selectedRowData = dt.row('.selected').data();
                             if (!selectedRowData) {
-                                alert('Пожалуйста, выберите строку для перехода.');
+                                alert(i18next.t('pleaseSelectARow'));
                                 return;
                             }
                             navigateToNextLevel(selectedRowData);
@@ -765,13 +851,13 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                     },
                     {
-                        text: 'Vulnerabilities',
+                        text: i18next.t('vulnerabilities'),
                         name: 'Vulnerabilities',
                         className: 'btn-vulnerabilities',
                         action: function (e, dt, node, config) {
                             const selectedRowData = dt.row({ selected: true }).data();
                             if (!selectedRowData) {
-                                alert('Please select a package to view vulnerabilities.');
+                                alert(i18next.t('pleaseSelectAPackage'));
                                 return;
                             }
                             const projectId = window.location.hash.split('/')[1];
@@ -783,7 +869,51 @@ document.addEventListener('DOMContentLoaded', function () {
                         },
                         enabled: false
                     },
+                    {
+                        text: i18next.t('compare'),
+                        name: 'Compare',
+                        className: 'btn-compare',
+                        action: function (e, dt, node, config) {
+                            const selectedRowData = dt.row({ selected: true }).data();
+                            if (!selectedRowData) {
+                                alert(i18next.t('pleaseSelectARow'));
+                                return;
+                            }
+                            document.getElementById('compareModal').style.display = 'block';
+                            populatePreviousAssemblies(selectedRowData.assm_id);
+                        },
+                        enabled: false
+                    },
+                    {
+                        text: i18next.t('report'),
+                        name: 'Report',
+                        className: 'btn-report',
+                        action: function (e, dt, button, config) {
+                            updateFullReport();
+                        }
+                    }
+
                 ],
+                language: {
+                    "decimal":        "",
+                    "emptyTable":     i18next.t('emptyTable') || "No data available in table",
+                    "info":           i18next.t('info') || "Showing _START_ to _END_ of _TOTAL_ entries",
+                    "infoEmpty":      i18next.t('infoEmpty') || "Showing 0 to 0 of 0 entries",
+                    "infoFiltered":   i18next.t('infoFiltered') || "(filtered from _MAX_ total entries)",
+                    "infoPostFix":    "",
+                    "thousands":      ",",
+                    "lengthMenu":     i18next.t('lengthMenu') || "Show _MENU_ entries",
+                    "loadingRecords": i18next.t('loadingRecords') || "Loading...",
+                    "processing":     i18next.t('processing') || "Processing...",
+                    "search":         "",
+                    "zeroRecords":    i18next.t('zeroRecords') || "No matching records found",
+                    "paginate": {
+                        "first":      i18next.t('paginate.first') || "First",
+                        "last":       i18next.t('paginate.last') || "Last",
+                        "next":       i18next.t('paginate.next') || "Next",
+                        "previous":   i18next.t('paginate.previous') || "Previous"
+                    }
+                },
             });
 
             var table = $('#data-table').DataTable();
@@ -791,6 +921,8 @@ document.addEventListener('DOMContentLoaded', function () {
             // Получаем кнопки
             vulnerabilitiesButton = table.button('Vulnerabilities:name');
             nextLevelButton = table.button('NextLevel:name');
+            compareButton = table.button('Compare:name');
+            reportButton = table.button('Report:name');
 
             // Проверяем, что кнопки существуют перед их использованием
             if (vulnerabilitiesButton) {
@@ -799,6 +931,24 @@ document.addEventListener('DOMContentLoaded', function () {
                     vulnerabilitiesButton.node().css('display', 'inline-block');
                 } else {
                     vulnerabilitiesButton.node().css('display', 'none');
+                }
+            }
+
+            if (compareButton) {
+                // Обновляем видимость кнопки "Compare"
+                if (parts[0] === 'projects' && parts.length === 3 && parts[2] === 'assembly') {
+                    compareButton.node().css('display', 'inline-block');
+                } else {
+                    compareButton.node().css('display', 'none');
+                }
+            }
+
+            if (reportButton) {
+                // Обновляем видимость кнопки "Report"
+                if (parts[0] === 'projects' && parts.length === 6 && parts[4] === 'compare') {
+                    reportButton.node().css('display', 'inline-block');
+                } else {
+                    reportButton.node().css('display', 'none');
                 }
             }
 
@@ -817,6 +967,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Изначально деактивируем кнопки
             if (vulnerabilitiesButton) vulnerabilitiesButton.disable();
             if (nextLevelButton) nextLevelButton.disable();
+            if (compareButton) compareButton.disable();
 
             // Обработчик для активации/деактивации кнопок при выборе/снятии выделения строки
             table.on('select deselect', function () {
@@ -825,9 +976,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (selectedRows > 0) {
                     if (vulnerabilitiesButton) vulnerabilitiesButton.enable();
                     if (nextLevelButton) nextLevelButton.enable();
+                    if (compareButton) compareButton.enable();
                 } else {
                     if (vulnerabilitiesButton) vulnerabilitiesButton.disable();
                     if (nextLevelButton) nextLevelButton.disable();
+                    if (compareButton) compareButton.disable();
                 }
             });
 
@@ -966,75 +1119,34 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     window.location.hash = `#projects/${projectId}/assembly/${assemblyId}/packages/${packageId}/changelog`;
                 }
-
-                // Редактирование по двойному клику на другие столбцы
-                if (cell.hasClass('editable')) {
-                    const originalText = cell.text();
-                    const input = $('<input>', {
-                        type: 'text',
-                        value: originalText
-                    });
-
-                    cell.empty().append(input);
-                    input.focus();
-
-                    input.on('blur', function () {
-                        const newValue = input.val();
-                        cell.text(newValue);
-
-                        const rowId = rowData['prj_id'] || rowData['assm_id'] || rowData['pkg_vrs_id'];
-
-                        // Получаем все столбцы, включая скрытые, чтобы правильно идентифицировать измененный столбец
-                        const allColumns = $('#data-table').DataTable().settings().init().columns;
-                        const visibleColumnIndex = cell.index(); // Индекс видимого столбца в таблице
-
-                        // Определяем реальный индекс столбца в массиве всех столбцов
-                        let realColumnIndex = -1;
-                        let visibleIndex = 0;
-
-                        for (let i = 0; i < allColumns.length; i++) {
-                            if (allColumns[i].visible === false) continue; // Пропускаем скрытые столбцы
-                            if (visibleIndex === visibleColumnIndex) {
-                                realColumnIndex = i;
-                                break;
-                            }
-                            visibleIndex++;
-                        }
-
-                        // Проверяем, что получили корректный индекс
-                        if (realColumnIndex === -1) {
-                            console.error('Не удалось определить реальный индекс столбца.');
-                            return;
-                        }
-
-                        const columnName = allColumns[realColumnIndex].data;
-
-                        // Определяем тип ресурса на основе контекста
-                        let resourceType;
-                        if (rowData.hasOwnProperty('prj_id')) {
-                            resourceType = 'project';
-                        } else if (rowData.hasOwnProperty('assm_id')) {
-                            resourceType = 'assembly';
-                        } else if (rowData.hasOwnProperty('pkg_vrs_id')) {
-                            resourceType = 'package';
-                        }
-
-                        // Отправка запроса на сервер с правильным столбцом
-                        updateServerData(rowId, columnName, newValue, resourceType);
-                    });
-
-
-
-                    input.on('keydown', function (event) {
-                        if (event.key === 'Enter') {
-                            input.blur();
-                        }
-                    });
-                }
             });
+
+            // Привязка обработчика dblclick к ячейкам, имеющим класс 'editable'
+            $('#data-table tbody').on('dblclick', 'td.editable', handleEditableDblClick);
 
         } else {
             showErrorMessage();
+        }
+    }
+
+    // Функция обновления области авторизации в Navbar
+    function updateAuthArea() {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const authArea = document.getElementById('auth-area');
+        if (currentUser && currentUser.username) {
+            authArea.innerHTML = `
+                <span style="margin-right:10px;">${i18next.t('greeting', {username: currentUser.username})}</span>
+                <button class="btn btn-secondary" id="logout-button">${i18next.t('logout')}</button>
+            `;
+            document.getElementById('logout-button').addEventListener('click', function() {
+                localStorage.removeItem('currentUser');
+                updateAuthArea();
+            });
+        } else {
+            authArea.innerHTML = `<button class="btn btn-secondary" id="auth-button" data-i18n="loginRegister">${i18next.t('loginRegister')}</button>`;
+            document.getElementById('auth-button').addEventListener('click', function() {
+                authModal.style.display = 'block';
+            });
         }
     }
 
@@ -1152,9 +1264,120 @@ document.addEventListener('DOMContentLoaded', function () {
         openStatsModal();
     });
 
-    document.getElementById('filter-toggle-button').addEventListener('click', function() {
+    // Открытие модального окна
+    authButton.addEventListener('click', function() {
+        authModal.style.display = 'block';
+    });
+
+    // Закрытие модального окна
+    authModalClose.addEventListener('click', function() {
+        authModal.style.display = 'none';
+    });
+
+    // Переключение между вкладками
+    loginTab.addEventListener('click', function() {
+        loginTab.classList.add('active');
+        registerTab.classList.remove('active');
+        loginFormContainer.style.display = 'block';
+        registerFormContainer.style.display = 'none';
+    });
+
+    registerTab.addEventListener('click', function() {
+        registerTab.classList.add('active');
+        loginTab.classList.remove('active');
+        registerFormContainer.style.display = 'block';
+        loginFormContainer.style.display = 'none';
+    });
+
+    // Обработка отправки формы входа
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+
+        fetch('http://0.0.0.0:8000/auth/login', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({email: email, password: password})
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Сохраняем данные пользователя (например, username и роль)
+                    localStorage.setItem('currentUser', JSON.stringify(data.user));
+                    updateAuthArea();
+                    authModal.style.display = 'none';
+                } else {
+                    alert('Ошибка входа: ' + data.message);
+                }
+            })
+            .catch(err => console.error(err));
+    });
+
+    // Обработка отправки формы регистрации
+    document.getElementById('register-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const username = document.getElementById('register-username').value;
+        const email = document.getElementById('register-email').value;
+        const password = document.getElementById('register-password').value;
+        const confirmPassword = document.getElementById('register-confirm-password').value;
+        const adminCode = document.getElementById('admin-code').value;
+
+        if (password !== confirmPassword) {
+            alert('Пароли не совпадают!');
+            return;
+        }
+
+        fetch('http://0.0.0.0:8000/auth/register', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                username: username,
+                email: email,
+                password: password,
+                admin_code: adminCode
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Опционально можно сразу выполнить вход после регистрации
+                    localStorage.setItem('currentUser', JSON.stringify(data.user));
+                    updateAuthArea();
+                    authModal.style.display = 'none';
+                } else {
+                    alert('Ошибка регистрации: ' + data.message);
+                }
+            })
+            .catch(err => console.error(err));
+    });
+
+    //Обработка выбора сборки для сравнения в модальном окне
+    document.getElementById('compare-confirm-button').addEventListener('click', function() {
+        const previousAssmId = document.getElementById('previous-assembly-select').value;
+        const table = $('#data-table').DataTable();
+        const selectedRow = table.row({ selected: true }).data();
+        const parts = window.location.hash.substr(1).split('/');
+        const projectId = parts[1];
+        if (!previousAssmId) {
+            alert(i18next.t('pleaseSelectAssembly'));
+            return;
+        }
+        // Формируем новый URL: #projects/{project_id}/assembly/{currentAssmId}/compare/{previousAssmId}
+        const newHash = `#projects/${projectId}/assembly/${selectedRow.assm_id}/compare/${previousAssmId}`;
+        window.location.hash = newHash;
+        document.getElementById('compareModal').style.display = 'none';
+    });
+
+
+    document.getElementById('cve-filter-toggle-button').addEventListener('click', function() {
         document.getElementById('cve-filter-panel').classList.toggle('open');
-        document.getElementById('filter-toggle-button').classList.toggle('filter-toggle-button_open');
+        document.getElementById('cve-filter-toggle-button').classList.toggle('filter-toggle-button_open');
+    });
+
+    document.getElementById('compare-filter-toggle-button').addEventListener('click', function() {
+        document.getElementById('compare-filter-panel').classList.toggle('open');
+        document.getElementById('compare-filter-toggle-button').classList.toggle('filter-toggle-button_open');
     });
 
     document.getElementById('custom-search-button').addEventListener('click', function() {
@@ -1206,6 +1429,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     updateFooterDates();
+    updateAuthArea();
+    disableEditingForNonAdmins();
 })
 
 function getCVEFilters() {
@@ -1241,30 +1466,31 @@ function getCVEFilters() {
     return params.toString();
 }
 
+function getCompareFilters() {
+    const form = document.getElementById('compare-filters-form');
+    const formData = new FormData(form);
+    const params = new URLSearchParams();
+
+    // Собираем выбранные коды состояний
+    const stateValues = formData.getAll('compare_state_filter');
+    if (stateValues.length) {
+        params.append('compare_state_filter', stateValues.join(','));
+    }
+
+    // Фильтры для совместной сборки:
+    const includeJointCurrent = document.getElementById('include_joint_current');
+    const includeJointPrevious = document.getElementById('include_joint_previous');
+    if (includeJointCurrent) {
+        params.append('include_joint_current', includeJointCurrent.checked ? 'true' : 'false');
+    }
+    if (includeJointPrevious) {
+        params.append('include_joint_previous', includeJointPrevious.checked ? 'true' : 'false');
+    }
+    return params.toString();
+}
+
+
 function initializeCompareFilterPanel() {
-    // Фильтр по состоянию (чекбоксы с именем "compare_state_filter")
-    const stateFilters = document.querySelectorAll('input[name="compare_state_filter"]');
-    stateFilters.forEach(function(input) {
-        input.addEventListener('change', function() {
-            $('#data-table').DataTable().ajax.reload();
-        });
-    });
-
-    // Фильтры для флага "Совместная сборка"
-    const includeJointCurrentInput = document.getElementById('include_joint_current');
-    const includeJointPreviousInput = document.getElementById('include_joint_previous');
-    if (includeJointCurrentInput) {
-        includeJointCurrentInput.addEventListener('change', function() {
-            $('#data-table').DataTable().ajax.reload();
-        });
-    }
-    if (includeJointPreviousInput) {
-        includeJointPreviousInput.addEventListener('change', function() {
-            $('#data-table').DataTable().ajax.reload();
-        });
-    }
-
-    // Кнопка "Применить" в панели фильтров
     const compareFilterApply = document.getElementById('compare-filter-apply');
     if (compareFilterApply) {
         compareFilterApply.addEventListener('click', function() {
@@ -1272,7 +1498,6 @@ function initializeCompareFilterPanel() {
         });
     }
 }
-
 
 function updateDataPanel(rowData) {
     if (!rowData) return;
@@ -1329,7 +1554,6 @@ function fetchBDUData(cveName) {
             }
         });
 }
-
 
 function updateDescriptionPanel() {
     const titleElement = document.getElementById('cve-title');
@@ -1518,6 +1742,89 @@ function fetchCVELinks(cveName) {
         });
 }
 
+function handleEditableDblClick(event) {
+    // Проверяем роль пользователя, извлекая данные из localStorage
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser || currentUser.role !== 'admin') {
+        // Если пользователь не админ, отменяем редактирование
+        return;
+    }
+
+    const cell = $(this);
+    const row = cell.closest('tr');
+    const rowData = $('#data-table').DataTable().row(row).data();
+
+    // Запускаем редактирование для ячейки
+    const originalText = cell.text();
+    const input = $('<input>', {
+        type: 'text',
+        value: originalText
+    });
+
+    cell.empty().append(input);
+    input.focus();
+
+    input.on('blur', function () {
+        const newValue = input.val();
+        cell.text(newValue);
+
+        const rowId = rowData['prj_id'] || rowData['assm_id'] || rowData['pkg_vrs_id'];
+
+        // Получаем все столбцы, включая скрытые, чтобы правильно идентифицировать изменённый столбец
+        const allColumns = $('#data-table').DataTable().settings().init().columns;
+        const visibleColumnIndex = cell.index(); // Индекс видимого столбца в таблице
+
+        // Определяем реальный индекс столбца в массиве всех столбцов
+        let realColumnIndex = -1;
+        let visibleIndex = 0;
+
+        for (let i = 0; i < allColumns.length; i++) {
+            if (allColumns[i].visible === false) continue; // Пропускаем скрытые столбцы
+            if (visibleIndex === visibleColumnIndex) {
+                realColumnIndex = i;
+                break;
+            }
+            visibleIndex++;
+        }
+
+        if (realColumnIndex === -1) {
+            console.error('Не удалось определить реальный индекс столбца.');
+            return;
+        }
+
+        const columnName = allColumns[realColumnIndex].data;
+
+        // Определяем тип ресурса на основе контекста
+        let resourceType;
+        if (rowData.hasOwnProperty('prj_id')) {
+            resourceType = 'project';
+        } else if (rowData.hasOwnProperty('assm_id')) {
+            resourceType = 'assembly';
+        } else if (rowData.hasOwnProperty('pkg_vrs_id')) {
+            resourceType = 'package';
+        }
+
+        // Отправка запроса на сервер с правильным столбцом
+        updateServerData(rowId, columnName, newValue, resourceType);
+    });
+
+    input.on('keydown', function (event) {
+        if (event.key === 'Enter') {
+            input.blur();
+        }
+    });
+}
+
+function disableEditingForNonAdmins() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser || currentUser.role !== 'admin') {
+        // Убираем возможность редактирования для всех ячеек с классом 'editable'
+        $('#data-table tbody td.editable').off('dblclick', handleEditableDblClick);
+        // Также можно добавить визуальное оформление, чтобы показать, что редактирование недоступно
+        $('#data-table tbody td.editable').css('cursor', 'not-allowed');
+    }
+}
+
 
 // ----------Side Panels------------
 
@@ -1540,11 +1847,11 @@ function getNextLevelButtonText() {
 
     if (parts[0] === 'projects') {
         if (parts.length === 1) {
-            return 'Assemblies';
+            return i18next.t('assemblies');
         } else if (parts.length === 3 && parts[2] === 'assembly') {
-            return 'Packages';
+            return i18next.t('packages');
         } else if (parts.length === 5 && parts[4] === 'package') {
-            return 'Changelog';
+            return i18next.t('changelog');
         } else if (parts.length === 7 && parts[4] === 'packages' && parts[6] === 'changelog') {
             return '';
         }
@@ -1601,6 +1908,51 @@ function togglePackageCheckbox() {
         console.error('Element with ID "package-checkbox" not found.');
     }
 }
+
+function populatePreviousAssemblies(currentAssmId) {
+    const modal = document.getElementById('compareModal');
+    const closeButton = document.getElementById('compareModalClose');
+    const parts = window.location.hash.substr(1).split('/');
+    const projectId = parts[1];
+
+    const url = `http://0.0.0.0:8000/projects/${projectId}/assembly/olderThan/${currentAssmId}`;
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            const select = document.getElementById('previous-assembly-select');
+            select.innerHTML = "";
+            if (data && data.length > 0) {
+                data.forEach(function(assembly) {
+                    const option = document.createElement('option');
+                    option.value = assembly.assm_id;
+                    // Преобразуем дату в читаемый формат
+                    const dateObj = new Date(assembly.assm_date_created);
+                    const formattedDate = dateObj.toLocaleString('ru-RU', {
+                        year: 'numeric',
+                        month: 'numeric',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    option.textContent = `${formattedDate} – ${assembly.assm_desc}`;
+                    select.appendChild(option);
+                });
+            } else {
+                const option = document.createElement('option');
+                option.value = "";
+                option.textContent = i18next.t('noAssembliesAvailable') || "Нет доступных сборок";
+                select.appendChild(option);
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка при получении сборок для сравнения:', error);
+        });
+
+    closeButton.onclick = function() {
+        modal.style.display = 'none';
+    };
+}
+
 
 
 function updateServerData(rowId, column, value, resourceType) {
@@ -1724,42 +2076,72 @@ function updateServerData(rowId, column, value, resourceType) {
 
 
 async function updateNavigationLinks(links) {
-    const breadcrumbLinks = document.getElementById('breadcrumb-links');
-    if (!breadcrumbLinks) {
-        console.error('breadcrumb-links element not found in DOM');
+    const breadcrumbContainer = document.getElementById('breadcrumb-links');
+    if (!breadcrumbContainer) {
+        console.error('breadcrumb-links element not found');
         return;
     }
 
     const hash = window.location.hash.substring(1);
     const parts = hash.split('/');
 
-    // Асинхронная загрузка всех хлебных крошек
+    // Если это страница сравнения сборок
+    if (/^projects\/\d+\/assembly\/\d+\/compare\/\d+$/.test(hash)) {
+        const standardBreadcrumbs = (await Promise.all(
+            links.slice(0, 2).map(async (link, index) => {
+                let text = 'Home';
+                if (index === 0) {
+                    text = link === '#projects' ? 'Projects' : 'Home';
+                } else if (index === 1) {
+                    const projectId = parts[1];
+                    if (contextData.projectNames[projectId]) {
+                        text = contextData.projectNames[projectId];
+                    } else {
+                        text = await fetchResourceInfo('projects', projectId, 'projectNames', `Project ${projectId}`);
+                    }
+                }
+                return `<a href="${link}" class="mr-2">${text}</a>`;
+            })
+        )).join(' / ');
+
+        const currentAssmId = parts[3];
+        const previousAssmId = parts[5];
+
+        try {
+            const [prevResp, currResp] = await Promise.all([
+                fetch(`http://0.0.0.0:8000/assemblies/${previousAssmId}/info`),
+                fetch(`http://0.0.0.0:8000/assemblies/${currentAssmId}/info`)
+            ]);
+            const prevData = await prevResp.json();
+            const currData = await currResp.json();
+            const prevInfo = prevData.data || "Неизвестно";
+            const currInfo = currData.data || "Неизвестно";
+            const compareString = `${prevInfo} => ${currInfo}`;
+            breadcrumbContainer.innerHTML = standardBreadcrumbs + ' / ' + compareString;
+        } catch (err) {
+            console.error("Ошибка при получении данных для хлебных крошек сравнения сборок:", err);
+            breadcrumbContainer.innerHTML = standardBreadcrumbs;
+        }
+        return;
+    }
+
+    // Для остальных страниц
     const breadcrumbs = await Promise.all(
         links.map(async (link, index) => {
-            let text = 'Home'; // Значение по умолчанию
-
-            if (index === 0) { // Главная страница
-                if (link === '#projects') {
-                    text = 'Projects';
-                } else if (link === '#cve') {
-                    text = 'Vulnerabilities';
-                }
-            } else if (index === 1 && parts.length >= 2) { // Страница сборок
+            let text = 'Home';
+            if (index === 0) {
+                text = (link === '#projects') ? 'Projects' : 'Home';
+            } else if (index === 1 && parts.length >= 2) {
                 const projectId = parts[1];
                 if (contextData.projectNames[projectId]) {
                     text = contextData.projectNames[projectId];
                 } else {
                     text = await fetchResourceInfo('projects', projectId, 'projectNames', `Project ${projectId}`);
                 }
-            } else if (index === 2 && parts.length >= 4) { // Страница пакетов
+            } else if (index === 2 && parts.length >= 4) {
                 const assemblyId = parts[3];
-                // if (contextData.assemblyDates[assemblyId]) {
-                //     text = contextData.assemblyDates[assemblyId];
-                // } else {
-                //     text = await fetchResourceInfo('assemblies', assemblyId, 'assemblyDates', `Assembly ${assemblyId}`);
-                // }
                 text = await fetchResourceInfo('assemblies', assemblyId, 'assemblyDates', `Assembly ${assemblyId}`);
-            } else if (index === 3 && parts.length >= 6) { // Страница changelog
+            } else if (index === 3 && parts.length >= 6) {
                 const packageId = parts[5];
                 if (contextData.packageNames[packageId]) {
                     const packageInfo = contextData.packageNames[packageId];
@@ -1769,13 +2151,25 @@ async function updateNavigationLinks(links) {
                     text = `${data.pkg_name || `Package ${packageId}`}: ${data.version || ''}`;
                 }
             }
-
             return `<a href="${link}" class="mr-2">${text}</a>`;
         })
     );
-
     localStorage.setItem('breadcrumbs', JSON.stringify(breadcrumbs));
-    breadcrumbLinks.innerHTML = breadcrumbs.join(' / ');
+    breadcrumbContainer.innerHTML = breadcrumbs.join(' / ');
+}
+
+function showLoadingOverlay() {
+    const overlay = document.getElementById('loading-overlay');
+    if (overlay) {
+        overlay.style.display = 'flex';
+    }
+}
+
+function hideLoadingOverlay() {
+    const overlay = document.getElementById('loading-overlay');
+    if (overlay) {
+        overlay.style.display = 'none';
+    }
 }
 
 // Вспомогательная функция для запроса к серверу
@@ -1808,7 +2202,6 @@ async function fetchResourceInfo(resource, resourceId, contextKey, defaultValue)
         return defaultValue;
     }
 }
-
 
 function openStatsModal() {
     const modal = document.getElementById('stats-modal');
@@ -1897,6 +2290,8 @@ function exportAllData(format, filename) {
         apiUrl += '/projects';
     } else if (parts[0] === 'projects' && parts.length === 3 && parts[2] === 'assembly') {
         apiUrl += `/projects/${parts[1]}/assembly`;
+    } else if (parts[0] === 'projects' && parts.length === 6 && parts[4] === 'compare') {
+        apiUrl += `/projects/${parts[1]}/assembly/${parts[3]}/compare/${parts[5]}`;
     } else if (parts[0] === 'projects' && parts.length === 5 && parts[4] === 'package') {
         apiUrl += `/projects/${parts[1]}/assembly/${parts[3]}/package`;
     } else if (parts[0] === 'projects' && parts.length === 7 && parts[4] === 'packages' && parts[6] === 'changelog') {
@@ -1958,7 +2353,6 @@ function exportAllData(format, filename) {
         .catch(error => console.error('Export failed:', error));
 }
 
-
 function downloadFile(data, filename, mimeType) {
     const blob = new Blob([data], { type: mimeType });
     const link = document.createElement('a');
@@ -1977,8 +2371,6 @@ function printData(data) {
     printWindow.document.close();
     printWindow.print();
 }
-
-
 
 function updateFooterDates() {
     fetch('http://0.0.0.0:8000/api/stats')
@@ -2024,6 +2416,255 @@ function updateFooterDates() {
             console.error('Ошибка при получении дат обновления:', error);
         });
 }
+
+// Функция для открытия новой вкладки и подготовки базового HTML для отчёта
+function openReportWindow() {
+    // Открываем новое окно
+    const reportWindow = window.open('', '_blank');
+    // Записываем базовую HTML-разметку, включая контейнер для отчёта
+    reportWindow.document.open();
+    reportWindow.document.write(`
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <title>Отчёт</title>
+        <style>
+          body { font-family: "DejaVu Sans", sans-serif; padding: 20px; }
+          pre { white-space: pre-wrap; word-wrap: break-word; }
+          .package-details > div { margin-top: 15px}
+          .package-details > div { margin-left: 50px; margin-top: 7px}
+          .package-details > div > div { margin-left: 50px; margin-top: 5px }
+        </style>
+      </head>
+      <body>
+        <div id="report-container"></div>
+      </body>
+    </html>
+  `);
+    reportWindow.document.close();
+    return reportWindow;
+}
+
+
+function renderBasicReport(reportWindow, basicData, assemblyInfo = {}) {
+    const reportContainer = reportWindow.document.getElementById("report-container");
+    if (!reportContainer) {
+        console.error("Элемент report-container не найден в документе нового окна");
+        return;
+    }
+
+    reportContainer.innerHTML = "";
+
+    const {
+        projectName = "Неизвестный проект",
+        prevAssemblyDesc = "Неизвестная сборка (пред.)",
+        currAssemblyDesc = "Неизвестная сборка (тек.)"
+    } = assemblyInfo;
+
+    // Заголовки, например:
+    // Проект: onyx(OSnova 2.x)
+    // Разность сборок: 2022-07-26(2.5.1 release) ⇒ 2024-05-14(2.10.1 release)
+    const headerHTML = `
+    <h2>Проект: ${projectName}</h2>
+    <h2>Разность сборок: ${prevAssemblyDesc} ⇒ ${currAssemblyDesc}</h2>
+  `;
+    reportContainer.insertAdjacentHTML("beforeend", headerHTML);
+
+    // Словарь для отображения состояния
+    const stateMapping = {
+        1: "Добавлен",
+        2: "Удалён",
+        3: "Повышен",
+        4: "Понижен",
+        5: "Не изменён"
+    };
+
+    // Генерируем основной блок для каждого пакета
+    basicData.forEach(pkg => {
+        const pkgState = stateMapping[pkg.state] || "Неизвестен";
+
+        // Делаем жирными только имя пакета и версии
+        // Пример строки: <strong>acpi-support</strong> - Повышен: <strong>0.142-8</strong>(2015-09-24 15:55:22)⇒<strong>0.143-5.1</strong>(2022-10-15 12:50:33)
+        let mainLine = `<strong>${pkg.pkg_name}</strong> - ${pkgState}: `;
+
+        if (pkg.previous_version) {
+            mainLine += `<strong>${pkg.previous_version}</strong>`;
+            if (pkg.previous_time) {
+                mainLine += `(${pkg.previous_time})`;
+            }
+        }
+        if (pkg.current_version) {
+            mainLine += `⇒<strong>${pkg.current_version}</strong>`;
+            if (pkg.current_time) {
+                mainLine += `(${pkg.current_time})`;
+            }
+        }
+
+        // Создаём контейнер для пакета
+        const pkgElement = reportWindow.document.createElement("div");
+        pkgElement.className = "package-report";
+        pkgElement.setAttribute("data-pkg-name", pkg.pkg_name);
+
+        // Основная строка (div), плюс div для деталей
+        pkgElement.innerHTML = `
+          <div>${mainLine}</div>
+          <div class="package-details"></div>
+        `;
+        reportContainer.appendChild(pkgElement);
+    });
+}
+
+
+// Функция для дозагрузки деталей для одного пакета
+function loadPackageDetails(reportWindow, pkg) {
+    if (pkg.state === 5) {
+        return;
+    }
+    let lowerBound = "";
+    let upperBound = "";
+
+    if (pkg.state === 1) {
+        lowerBound = "1900-01-01 00:00:00"; // минимальный порог
+        upperBound = pkg.current_time ? pkg.current_time.trim() : "";
+    }
+    else if (pkg.state === 2) {
+        lowerBound = pkg.previous_time ? pkg.previous_time.trim() : "";
+        upperBound = "2100-01-01 00:00:00"; // максимальный порог
+    }
+    else if (pkg.state === 3 || pkg.state === 4) {
+        lowerBound = pkg.previous_time ? pkg.previous_time.trim() : "";
+        upperBound = pkg.current_time ? pkg.current_time.trim() : "";
+    }
+
+    if (!lowerBound || !upperBound) {
+        return;
+    }
+
+    const url = `http://0.0.0.0:8000/report/package_details/${encodeURIComponent(pkg.pkg_name)}?prev_time=${encodeURIComponent(lowerBound)}&curr_time=${encodeURIComponent(upperBound)}`;
+
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Ошибка дозагрузки деталей");
+            }
+            return response.json();
+        })
+        .then(data => {
+            updateReportForPackage(reportWindow, pkg.pkg_name, data.details);
+        })
+        .catch(err => console.error("Ошибка дозагрузки деталей для пакета " + pkg.pkg_name, err));
+}
+
+
+
+// Функция для обновления HTML-отчёта для пакета в новом окне
+function updateReportForPackage(reportWindow, pkgName, details) {
+    const pkgElement = reportWindow.document.querySelector(`[data-pkg-name="${pkgName}"]`);
+    if (!pkgElement) return;
+
+    const detailsContainer = pkgElement.querySelector(".package-details");
+    if (!detailsContainer) return;
+
+    // Очищаем детали перед заполнением
+    detailsContainer.innerHTML = "";
+
+    details.forEach(detail => {
+        // Пример шаблона:
+        // "Добавлен - Версия:0.143-5.1 от Michael Biebl<biebl@debian.org> от 2022-10-15 12:50:33"
+        // Можно также учесть, что "Добавлен" или "Повышен" и т.д. может зависеть от pkg.state, но
+        // если у нас detail не хранит статус, то просто пишем "Добавлен" или вынимаем из pkg.stateMapping.
+        // Ниже - упрощённый вариант (всегда "Добавлен")
+        const versionLine = document.createElement("div");
+        versionLine.classList.add("version-line");
+        versionLine.textContent = `Добавлен - Версия:${detail.version} от ${detail.author} от ${detail.assm_date}`;
+
+        // Создаём контейнер для ченджлога
+        const changelogContainer = document.createElement("div");
+        changelogContainer.classList.add("changelog-container");
+
+        // Разбиваем ченджлог по строкам
+        if (detail.changelog.trim()) {
+            const lines = detail.changelog.split("*");
+            lines.forEach(line => {
+                // Создаём div для каждой строки
+                const logLineDiv = document.createElement("div");
+                logLineDiv.textContent = "* " + line;
+                changelogContainer.appendChild(logLineDiv);
+            });
+        }
+
+        // Вкладываем changelog внутрь versionLine
+        versionLine.appendChild(changelogContainer);
+
+        // Добавляем в detailsContainer
+        detailsContainer.appendChild(versionLine);
+    });
+}
+
+
+
+// Функция для получения базового отчёта и дозагрузки деталей, создавая новый таб
+async function updateFullReport() {
+    const hash = window.location.hash.substring(1);
+    const parts = hash.split('/');
+    if (parts.length !== 6) {
+        alert("Отчёт доступен только на странице сравнения сборок");
+        return;
+    }
+    const projectId = parts[1];
+    const currentAssmId = parts[3];
+    const previousAssmId = parts[5];
+
+    const [prevResp, currResp, projResp] = await Promise.all([
+        fetch(`http://0.0.0.0:8000/assemblies/${previousAssmId}/info`),
+        fetch(`http://0.0.0.0:8000/assemblies/${currentAssmId}/info`),
+        fetch(`http://0.0.0.0:8000/projects/${projectId}/info`)
+    ]);
+
+    const prevData = await prevResp.json();
+    const currData = await currResp.json();
+    const projData = await projResp.json();
+
+    const projectName = projData.data || "Неизвестно";
+    const prevAssemblyDesc = prevData.data || "Неизвестно";
+    const currAssemblyDesc = currData.data || "Неизвестно";
+
+    let baseUrl = `http://0.0.0.0:8000/projects/${projectId}/assembly/${currentAssmId}/compare/${previousAssmId}?all=true`;
+
+    const compareFilters = getCompareFilters();
+    if (compareFilters) {
+        baseUrl += "&" + compareFilters;
+    }
+
+    const reportWindow = openReportWindow();
+    showLoadingOverlay();
+
+    try {
+        const response = await fetch(baseUrl);
+        if (!response.ok) {
+            throw new Error(`Ошибка загрузки базового отчёта: ${response.statusText}`);
+        }
+        const basicData = await response.json();
+
+        // 4. Отрисовываем базовый отчёт, передаём динамическую информацию о проекте/сборках
+        renderBasicReport(reportWindow, basicData.data, {
+            projectName,
+            prevAssemblyDesc,
+            currAssemblyDesc
+        });
+
+        // 5. Дозагружаем детали для каждого пакета
+        basicData.data.forEach(pkg => {
+            loadPackageDetails(reportWindow, pkg);
+        });
+    } catch (err) {
+        console.error("Ошибка загрузки базового отчёта:", err);
+        alert("Ошибка загрузки базового отчёта");
+    } finally {
+        hideLoadingOverlay();
+    }
+}
+
 
 function showErrorMessage() {
     const mainContent = document.querySelector('main');

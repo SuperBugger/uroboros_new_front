@@ -1982,98 +1982,6 @@ function updateServerData(rowId, column, value, resourceType) {
         });
 }
 
-// function updateNavigationLinks(links) {
-//     const breadcrumbLinks = document.getElementById('breadcrumb-links');
-//
-//     if (breadcrumbLinks) {
-//         const hash = window.location.hash.substring(1);
-//         const parts = hash.split('/');
-//
-//         // Формирование ссылок
-//         let breadcrumbs = links.map((link, index) => {
-//             let text = 'Home'; // По умолчанию
-//
-//             if (index === 0) { // Главная страница
-//                 if (link === '#projects') {
-//                     text = 'Projects';
-//                 } else if (link === '#cve') {
-//                     text = 'Vulnerabilities';
-//                 }
-//             } else if (index === 1 && parts.length >= 2) { // Страница сборок
-//                 const projectId = parts[1];
-//                 // text = contextData.projectNames[projectId] || `Project ${projectId}`;
-//                 if (contextData.projectNames[projectId]) {
-//                     text = contextData.projectNames[projectId];
-//                 } else {
-//                     // Если данные отсутствуют, делаем запрос к серверу
-//                     fetch(`/projects/${projectId}/name`)
-//                         .then(response => response.json())
-//                         .then(data => {
-//                             contextData.projectNames[projectId] = data.name || `Project ${projectId}`;
-//                             updateNavigationLinks(links); // Повторный вызов для обновления
-//                         })
-//                         .catch(error => {
-//                             console.error(`Failed to fetch project name for ID ${projectId}:`, error);
-//                         });
-//                     return `Project ${projectId}`;
-//                 }
-//             } else if (index === 2 && parts.length >= 4) { // Страница пакетов
-//                 const assemblyId = parts[3];
-//                 // text = contextData.assemblyDates[assemblyId] || `Assembly ${assemblyId}`;
-//                 if (contextData.assemblyDates[assemblyId]) {
-//                     text = contextData.assemblyDates[assemblyId];
-//                 } else {
-//                     // Если данные отсутствуют, делаем запрос к серверу
-//                     fetch(`/assemblies/${assemblyId}/date`)
-//                         .then(response => response.json())
-//                         .then(data => {
-//                             contextData.assemblyDates[assemblyId] = data.date || `Assembly ${assemblyId}`;
-//                             updateNavigationLinks(links); // Повторный вызов для обновления
-//                         })
-//                         .catch(error => {
-//                             console.error(`Failed to fetch assembly date for ID ${assemblyId}:`, error);
-//                         });
-//                     return `Assembly ${assemblyId}`;
-//                 }
-//             } else if (index === 3 && parts.length >= 6) { // Страница changelog
-//                 const packageId = parts[5];
-//                 // const packageInfo = contextData.packageNames[packageId];
-//                 // if (packageInfo) {
-//                 //     text = `${packageInfo.pkg_name}: ${packageInfo.version}`;
-//                 // } else {
-//                 //     text = `Package ${packageId}`;
-//                 // }
-//                 if (contextData.packageNames[packageId]) {
-//                     const packageInfo = contextData.packageNames[packageId];
-//                     text = `${packageInfo.pkg_name}: ${packageInfo.version}`;
-//                 } else {
-//                     // Если данные отсутствуют, делаем запрос к серверу
-//                     fetch(`/packages/${packageId}/info`)
-//                         .then(response => response.json())
-//                         .then(data => {
-//                             contextData.packageNames[packageId] = {
-//                                 pkg_name: data.pkg_name || `Package ${packageId}`,
-//                                 version: data.version || ''
-//                             };
-//                             updateNavigationLinks(links); // Повторный вызов для обновления
-//                         })
-//                         .catch(error => {
-//                             console.error(`Failed to fetch package info for ID ${packageId}:`, error);
-//                         });
-//                     return `Package ${packageId}`;
-//                 }
-//             }
-//
-//             return `<a href="${link}" class="mr-2">${text}</a>`;
-//         });
-//
-//         localStorage.setItem('breadcrumbs', JSON.stringify(breadcrumbs));
-//         breadcrumbLinks.innerHTML = breadcrumbs.join(' / ');
-//     } else {
-//         console.error('breadcrumb-links element not found in DOM');
-//     }
-// }
-
 
 async function updateNavigationLinks(links) {
     const breadcrumbContainer = document.getElementById('breadcrumb-links');
@@ -2417,11 +2325,9 @@ function updateFooterDates() {
         });
 }
 
-// Функция для открытия новой вкладки и подготовки базового HTML для отчёта
+// Функция для открытия нового окна и подготовки базового HTML для отчёта
 function openReportWindow() {
-    // Открываем новое окно
     const reportWindow = window.open('', '_blank');
-    // Записываем базовую HTML-разметку, включая контейнер для отчёта
     reportWindow.document.open();
     reportWindow.document.write(`
     <html>
@@ -2430,10 +2336,14 @@ function openReportWindow() {
         <title>Отчёт</title>
         <style>
           body { font-family: "DejaVu Sans", sans-serif; padding: 20px; }
-          pre { white-space: pre-wrap; word-wrap: break-word; }
-          .package-details > div { margin-top: 15px}
-          .package-details > div { margin-left: 50px; margin-top: 7px}
-          .package-details > div > div { margin-left: 50px; margin-top: 5px }
+          h2 { margin-bottom: 10px; }
+          hr { margin-bottom: 20px; }
+          .pkg-header { font-size: 1.2em; margin-bottom: 5px; }
+          .pkg-details { margin-bottom: 20px; }
+          .detail-line { margin-left: 20px; margin-bottom: 10px; }
+          .changelog { margin-left: 20px; margin-top: 5px; }
+          .log-line { margin-left: 20px; }
+          .package-report { margin-bottom: 30px; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
         </style>
       </head>
       <body>
@@ -2445,165 +2355,124 @@ function openReportWindow() {
     return reportWindow;
 }
 
+/**
+ * Форматирует дату для вывода (например, убирает секунды)
+ */
+function formatDate(dateStr) {
+    if (!dateStr) return "";
+    const d = new Date(dateStr);
+    if (isNaN(d)) return dateStr;
+    const pad = (n) => (n < 10 ? "0" + n : n);
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
 
-function renderBasicReport(reportWindow, basicData, assemblyInfo = {}) {
+/**
+ * Рендерит полный отчёт в новом окне.
+ * @param {Window} reportWindow - новое окно.
+ * @param {Array} basicData - массив строк, полученных единым запросом, с полями:
+ *    pkg_name, status, previous_version, previous_time, current_version, current_time,
+ *    version, author_name, date_added, log_desc, lvl
+ * @param {Object} assemblyInfo - объект с информацией о проекте и сборках:
+ *    { projectName, prevAssemblyDesc, currAssemblyDesc }
+ */
+function renderFullReport(reportWindow, basicData, assemblyInfo) {
     const reportContainer = reportWindow.document.getElementById("report-container");
     if (!reportContainer) {
-        console.error("Элемент report-container не найден в документе нового окна");
+        console.error("Элемент report-container не найден в новом окне");
         return;
     }
-
     reportContainer.innerHTML = "";
 
-    const {
-        projectName = "Неизвестный проект",
-        prevAssemblyDesc = "Неизвестная сборка (пред.)",
-        currAssemblyDesc = "Неизвестная сборка (тек.)"
-    } = assemblyInfo;
-
-    // Заголовки, например:
-    // Проект: onyx(OSnova 2.x)
-    // Разность сборок: 2022-07-26(2.5.1 release) ⇒ 2024-05-14(2.10.1 release)
+    // Добавляем заголовки отчёта
+    const { projectName, prevAssemblyDesc, currAssemblyDesc } = assemblyInfo;
     const headerHTML = `
     <h2>Проект: ${projectName}</h2>
     <h2>Разность сборок: ${prevAssemblyDesc} ⇒ ${currAssemblyDesc}</h2>
+    <hr/>
   `;
     reportContainer.insertAdjacentHTML("beforeend", headerHTML);
 
-    // Словарь для отображения состояния
-    const stateMapping = {
-        1: "Добавлен",
-        2: "Удалён",
-        3: "Повышен",
-        4: "Понижен",
-        5: "Не изменён"
-    };
-
-    // Генерируем основной блок для каждого пакета
-    basicData.forEach(pkg => {
-        const pkgState = stateMapping[pkg.state] || "Неизвестен";
-
-        // Делаем жирными только имя пакета и версии
-        // Пример строки: <strong>acpi-support</strong> - Повышен: <strong>0.142-8</strong>(2015-09-24 15:55:22)⇒<strong>0.143-5.1</strong>(2022-10-15 12:50:33)
-        let mainLine = `<strong>${pkg.pkg_name}</strong> - ${pkgState}: `;
-
-        if (pkg.previous_version) {
-            mainLine += `<strong>${pkg.previous_version}</strong>`;
-            if (pkg.previous_time) {
-                mainLine += `(${pkg.previous_time})`;
-            }
-        }
-        if (pkg.current_version) {
-            mainLine += `⇒<strong>${pkg.current_version}</strong>`;
-            if (pkg.current_time) {
-                mainLine += `(${pkg.current_time})`;
-            }
-        }
-
-        // Создаём контейнер для пакета
-        const pkgElement = reportWindow.document.createElement("div");
-        pkgElement.className = "package-report";
-        pkgElement.setAttribute("data-pkg-name", pkg.pkg_name);
-
-        // Основная строка (div), плюс div для деталей
-        pkgElement.innerHTML = `
-          <div>${mainLine}</div>
-          <div class="package-details"></div>
-        `;
-        reportContainer.appendChild(pkgElement);
+    // Группируем строки по pkg_name
+    const groups = {};
+    basicData.forEach(row => {
+        const key = row.pkg_name;
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(row);
     });
-}
 
+    // Для каждого пакета формируем блок отчёта
+    Object.keys(groups).forEach(pkgName => {
+        const rows = groups[pkgName];
+        // Найдём строку с lvl == 1 (сводная информация)
+        let summary = rows.find(r => Number(r.lvl) === 1) || rows[0];
 
-// Функция для дозагрузки деталей для одного пакета
-function loadPackageDetails(reportWindow, pkg) {
-    if (pkg.state === 5) {
-        return;
-    }
-    let lowerBound = "";
-    let upperBound = "";
+        // Заголовок блока пакета:
+        // <strong>pkg_name</strong> - status: <strong>previous_version</strong>(previous_time)⇒<strong>current_version</strong>(current_time)
+        let headerLine = `<div class="pkg-header">
+      <strong>${pkgName}</strong> - ${summary.status}: `;
+        if (summary.previous_version) {
+            headerLine += `<strong>${summary.previous_version}</strong> (${formatDate(summary.previous_time)})`;
+        }
+        if (summary.current_version) {
+            headerLine += ` ⇒ <strong>${summary.current_version}</strong> (${formatDate(summary.current_time)})`;
+        }
+        headerLine += `</div>`;
 
-    if (pkg.state === 1) {
-        lowerBound = "1900-01-01 00:00:00"; // минимальный порог
-        upperBound = pkg.current_time ? pkg.current_time.trim() : "";
-    }
-    else if (pkg.state === 2) {
-        lowerBound = pkg.previous_time ? pkg.previous_time.trim() : "";
-        upperBound = "2100-01-01 00:00:00"; // максимальный порог
-    }
-    else if (pkg.state === 3 || pkg.state === 4) {
-        lowerBound = pkg.previous_time ? pkg.previous_time.trim() : "";
-        upperBound = pkg.current_time ? pkg.current_time.trim() : "";
-    }
+        // Группируем промежуточные записи (lvl > 1) по версии, автору и дате
+        const detailRows = rows.filter(r => Number(r.lvl) > Number(summary.lvl));
+        const groupsByVersion = {};
+        detailRows.forEach(r => {
+            const key = `${r.version}||${r.author_name}||${r.date_added}`;
+            if (!groupsByVersion[key]) groupsByVersion[key] = [];
+            groupsByVersion[key].push(r);
+        });
 
-    if (!lowerBound || !upperBound) {
-        return;
-    }
+        // Преобразуем группы в массив и сортируем по дате (от более новой к старой)
+        const versionGroups = Object.values(groupsByVersion).sort((a, b) => {
+            const dateA = new Date(a[0].date_added);
+            const dateB = new Date(b[0].date_added);
+            return dateB - dateA;
+        });
 
-    const url = `http://0.0.0.0:8000/report/package_details/${encodeURIComponent(pkg.pkg_name)}?prev_time=${encodeURIComponent(lowerBound)}&curr_time=${encodeURIComponent(upperBound)}`;
-
-    fetch(url)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Ошибка дозагрузки деталей");
-            }
-            return response.json();
-        })
-        .then(data => {
-            updateReportForPackage(reportWindow, pkg.pkg_name, data.details);
-        })
-        .catch(err => console.error("Ошибка дозагрузки деталей для пакета " + pkg.pkg_name, err));
-}
-
-
-
-// Функция для обновления HTML-отчёта для пакета в новом окне
-function updateReportForPackage(reportWindow, pkgName, details) {
-    const pkgElement = reportWindow.document.querySelector(`[data-pkg-name="${pkgName}"]`);
-    if (!pkgElement) return;
-
-    const detailsContainer = pkgElement.querySelector(".package-details");
-    if (!detailsContainer) return;
-
-    // Очищаем детали перед заполнением
-    detailsContainer.innerHTML = "";
-
-    details.forEach(detail => {
-        // Пример шаблона:
-        // "Добавлен - Версия:0.143-5.1 от Michael Biebl<biebl@debian.org> от 2022-10-15 12:50:33"
-        // Можно также учесть, что "Добавлен" или "Повышен" и т.д. может зависеть от pkg.state, но
-        // если у нас detail не хранит статус, то просто пишем "Добавлен" или вынимаем из pkg.stateMapping.
-        // Ниже - упрощённый вариант (всегда "Добавлен")
-        const versionLine = document.createElement("div");
-        versionLine.classList.add("version-line");
-        versionLine.textContent = `Добавлен - Версия:${detail.version} от ${detail.author} от ${detail.assm_date}`;
-
-        // Создаём контейнер для ченджлога
-        const changelogContainer = document.createElement("div");
-        changelogContainer.classList.add("changelog-container");
-
-        // Разбиваем ченджлог по строкам
-        if (detail.changelog.trim()) {
-            const lines = detail.changelog.split("*");
-            lines.forEach(line => {
-                // Создаём div для каждой строки
-                const logLineDiv = document.createElement("div");
-                logLineDiv.textContent = "* " + line;
-                changelogContainer.appendChild(logLineDiv);
+        let detailsHTML = "";
+        versionGroups.forEach(group => {
+            // Берём первую строку группы для заголовка промежуточной версии
+            const groupHeader = group[0];
+            let groupHeaderLine = `<div class="detail-line">Добавлен - Версия: <strong>${groupHeader.version}</strong> от ${groupHeader.author_name} от ${formatDate(groupHeader.date_added)}</div>`;
+            // Собираем все строки ченджлога из группы
+            let logLines = [];
+            group.forEach(r => {
+                if (r.log_desc && r.log_desc.trim() !== "") {
+                    // Разбиваем по переводу строки
+                    const lines = r.log_desc.split("\n").map(l => l.trim()).filter(l => l);
+                    logLines.push(...lines);
+                }
             });
-        }
+            // Сортируем лог-строки в обратном порядке, чтобы последние (новые) были наверху
+            logLines = logLines.reverse();
+            let changelogHTML = "";
+            if (logLines.length > 0) {
+                changelogHTML = `<div class="changelog">`;
+                logLines.forEach(line => {
+                    changelogHTML += `<div class="log-line">* ${line}</div>`;
+                });
+                changelogHTML += `</div>`;
+            }
+            detailsHTML += groupHeaderLine + changelogHTML;
+        });
 
-        // Вкладываем changelog внутрь versionLine
-        versionLine.appendChild(changelogContainer);
-
-        // Добавляем в detailsContainer
-        detailsContainer.appendChild(versionLine);
+        const pkgBlockHTML = `<div class="package-report" data-pkg-name="${pkgName}">
+      ${headerLine}
+      <div class="pkg-details">${detailsHTML}</div>
+    </div>`;
+        reportContainer.insertAdjacentHTML("beforeend", pkgBlockHTML);
     });
 }
 
-
-
-// Функция для получения базового отчёта и дозагрузки деталей, создавая новый таб
+/**
+ * Функция для получения полного отчёта из сервера и его отображения.
+ * Запрашивает данные у нового endpoint: fullreport.
+ */
 async function updateFullReport() {
     const hash = window.location.hash.substring(1);
     const parts = hash.split('/');
@@ -2615,53 +2484,46 @@ async function updateFullReport() {
     const currentAssmId = parts[3];
     const previousAssmId = parts[5];
 
-    const [prevResp, currResp, projResp] = await Promise.all([
-        fetch(`http://0.0.0.0:8000/assemblies/${previousAssmId}/info`),
-        fetch(`http://0.0.0.0:8000/assemblies/${currentAssmId}/info`),
-        fetch(`http://0.0.0.0:8000/projects/${projectId}/info`)
-    ]);
-
-    const prevData = await prevResp.json();
-    const currData = await currResp.json();
-    const projData = await projResp.json();
-
-    const projectName = projData.data || "Неизвестно";
-    const prevAssemblyDesc = prevData.data || "Неизвестно";
-    const currAssemblyDesc = currData.data || "Неизвестно";
-
-    let baseUrl = `http://0.0.0.0:8000/projects/${projectId}/assembly/${currentAssmId}/compare/${previousAssmId}?all=true`;
-
+    // Формируем URL для полного запроса с параметром all=true и фильтрами
+    let baseUrl = `http://0.0.0.0:8000/projects/${projectId}/assembly/${currentAssmId}/compare/${previousAssmId}/fullreport?all=true`;
     const compareFilters = getCompareFilters();
     if (compareFilters) {
         baseUrl += "&" + compareFilters;
     }
 
-    const reportWindow = openReportWindow();
-    showLoadingOverlay();
-
     try {
+        // Получаем информацию о сборках и проекте для заголовков
+        const [prevResp, currResp, projResp] = await Promise.all([
+            fetch(`http://0.0.0.0:8000/assemblies/${previousAssmId}/info`),
+            fetch(`http://0.0.0.0:8000/assemblies/${currentAssmId}/info`),
+            fetch(`http://0.0.0.0:8000/projects/${projectId}/info`)
+        ]);
+        const prevData = await prevResp.json();
+        const currData = await currResp.json();
+        const projData = await projResp.json();
+        const assemblyInfo = {
+            projectName: projData.data || "Неизвестный проект",
+            prevAssemblyDesc: prevData.data || "Неизвестная сборка (пред.)",
+            currAssemblyDesc: currData.data || "Неизвестная сборка (тек.)"
+        };
+
+        const reportWindow = openReportWindow();
+        showLoadingOverlay();
+
         const response = await fetch(baseUrl);
         if (!response.ok) {
             throw new Error(`Ошибка загрузки базового отчёта: ${response.statusText}`);
         }
-        const basicData = await response.json();
-
-        // 4. Отрисовываем базовый отчёт, передаём динамическую информацию о проекте/сборках
-        renderBasicReport(reportWindow, basicData.data, {
-            projectName,
-            prevAssemblyDesc,
-            currAssemblyDesc
-        });
-
-        // 5. Дозагружаем детали для каждого пакета
-        basicData.data.forEach(pkg => {
-            loadPackageDetails(reportWindow, pkg);
-        });
+        const fullData = await response.json();
+        // fullData.data – массив строк с полями:
+        // pkg_name, status, previous_version, previous_time, current_version, current_time,
+        // version, author_name, date_added, log_desc, lvl
+        renderFullReport(reportWindow, fullData.data, assemblyInfo);
+        hideLoadingOverlay();
     } catch (err) {
+        hideLoadingOverlay();
         console.error("Ошибка загрузки базового отчёта:", err);
         alert("Ошибка загрузки базового отчёта");
-    } finally {
-        hideLoadingOverlay();
     }
 }
 
